@@ -1,4 +1,3 @@
-<!-- app/views/pages/kanban.html.erb -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,13 +8,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      height: 100%;
+      background: #000;
+    }
+    
     body {
       background: #000;
       color: #fff;
       font-family: 'Poppins', sans-serif;
       padding: 100px 40px 40px;
       margin: 0;
+      min-height: 100vh;
+      
     }
+    
     header {
       position: fixed;
       top: 0;
@@ -30,6 +43,7 @@
       padding: 0 40px;
       z-index: 1000;
     }
+    
     .brand {
       display: flex;
       align-items: center;
@@ -38,11 +52,28 @@
       font-weight: bold;
       color: #3b82f6;
     }
+    
     .user {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+    
+    .user button {
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .user button:hover {
+      background: #333;
+      color: #fff;
+    }
+    
     .user-icon {
       width: 32px;
       height: 32px;
@@ -55,12 +86,26 @@
       justify-content: center;
       border-radius: 9999px;
     }
+    
+    main {
+        min-height: calc(100vh - 164px);
+        margin: 0 auto;
+    }
+
+    .main{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
     main h1 {
       text-align: center;
       font-size: 32px;
       margin-bottom: 40px;
       color: #fff;
     }
+    
     .board {
       display: flex;
       flex-wrap: wrap;
@@ -69,6 +114,7 @@
       max-width: 1200px;
       margin: auto;
     }
+    
     .column {
       background: #1e1e1e;
       padding: 20px;
@@ -79,10 +125,13 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
+    
     .todo { border-left: 4px solid #3b82f6; }
     .in-progress { border-left: 4px solid #6366f1; }
     .done { border-left: 4px solid #10b981; }
+    
     .column h2 {
       font-size: 20px;
       margin-bottom: 16px;
@@ -90,6 +139,7 @@
       align-items: center;
       gap: 8px;
     }
+    
     .add-task {
       margin-bottom: 20px;
       padding: 8px 12px;
@@ -97,20 +147,39 @@
       border: 1px dashed #666;
       color: #ccc;
       cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s ease;
     }
+    
+    .add-task:hover {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+    
     .empty {
       color: #777;
       font-style: italic;
       margin-top: auto;
     }
+    
     .task {
       display: flex;
       gap: 10px;
       margin-bottom: 16px;
+      padding: 12px;
+      background: #2a2a2a;
+      border-radius: 8px;
+      transition: all 0.3s ease;
     }
+    
+    .task:hover {
+      background: #333;
+    }
+    
     .checkbox {
       margin-top: 4px;
     }
+    
     .badge {
       display: inline-block;
       padding: 2px 6px;
@@ -120,6 +189,23 @@
       border-radius: 6px;
       margin-top: 4px;
       margin-right: 4px;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .board {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .column {
+        max-width: 100%;
+        width: 100%;
+      }
+      
+      body {
+        padding: 100px 20px 40px;
+      }
     }
   </style>
 </head>
@@ -135,20 +221,26 @@
     </div>
   </header>
 
-  <main>
+  <main class="main">
     <h1>Quadro de Tarefas</h1>
     <div class="board">
-      <% { "To Do" => @todo_tasks, "In Progress" => @in_progress_tasks, "Done" => @done_tasks }.each_with_index do |(status, tasks), index| %>
-        <% status_class = %w[todo in-progress done][index] %>
-        <div class="column <%= status_class %>">
-          <h2>
-            <i class="fas <%= ['fa-clock', 'fa-spinner', 'fa-check-circle'][index] %>"></i>
-            <%= status %>
-          </h2>
+    <% columns = [@todo_column, @in_progress_column, @done_column] %>
+    <% { "To Do" => @todo_tasks, "In Progress" => @in_progress_tasks, "Done" => @done_tasks }.each_with_index do |(status, tasks), index| %>
+    <% status_class = %w[todo in-progress done][index] %>
+    <% column = columns[index] %>
 
-          <%= button_to "#", method: :get, class: "add-task", form: { data: { turbo: false } } do %>
-            + Adicionar nova tarefa
-          <% end %>
+    <div class="column <%= status_class %>">
+        <h2>
+        <i class="fas <%= ['fa-clock', 'fa-spinner', 'fa-check-circle'][index] %>"></i>
+        <%= status %>
+        </h2>
+
+      <% if column.board.present? %>
+      <%= link_to "+ Adicionar nova tarefa", new_board_column_task_path(column.board, column), class: "add-task" %>
+    <% else %>
+      <p style="color:red;">Erro: coluna sem board</p>
+    <% end %>
+
 
           <% if tasks.any? %>
             <% tasks.each do |task| %>
@@ -163,11 +255,6 @@
                   <div><strong><%= task.title %></strong></div>
                   <div style="font-size: 12px; color: #888;">
                     <%= task.due_date.strftime("%H:%M") %>
-                  </div>
-                  <div>
-                    <% task.tags.each do |tag| %>
-                      <span class="badge"><%= tag.title %></span>
-                    <% end %>
                   </div>
                 </div>
               </div>

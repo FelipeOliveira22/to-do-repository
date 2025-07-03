@@ -10,20 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_02_132510) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_03_010204) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "boards", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "columns", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "board_id"
+    t.index ["board_id"], name: "index_columns_on_board_id"
+  end
 
   create_table "tasks", force: :cascade do |t|
     t.string "title"
     t.text "description"
-    t.datetime "deadline"
+    t.datetime "due_date"
     t.boolean "done"
     t.integer "priority"
-    t.bigint "todo_list_id", null: false
+    t.bigint "todo_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
+    t.bigint "column_id"
+    t.index ["column_id"], name: "index_tasks_on_column_id"
     t.index ["todo_list_id"], name: "index_tasks_on_todo_list_id"
   end
 
@@ -35,5 +51,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_132510) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "columns", "boards"
+  add_foreign_key "tasks", "columns"
   add_foreign_key "tasks", "todo_lists"
 end
