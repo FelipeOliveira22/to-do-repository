@@ -21,9 +21,16 @@ class TasksController < ApplicationController
     end
   end
 
+    def destroy
+      @task = Task.find(params[:id])
+      @task.destroy
+
+      redirect_to root_path, notice: "Tarefa excluída com sucesso."
+    end
+
   private
 
   def task_params
-    params.require(:task).permit(:title, :due_date)
+    params.require(:task).permit(:title, :due_date, :description, :priority)
   end
 end
