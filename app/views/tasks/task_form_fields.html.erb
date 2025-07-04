@@ -1,0 +1,66 @@
+<!-- Exibir erros se houver -->
+<% if @task.errors.any? %>
+  <div class="error-messages">
+    <div class="error-header">
+      <i class="fas fa-exclamation-triangle"></i>
+      <%= pluralize(@task.errors.count, "erro") %> encontrado<%= @task.errors.count > 1 ? 's' : '' %>:
+    </div>
+    <ul class="error-list">
+      <% @task.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="form-group">
+  <%= form.label :title, class: "form-label" do %>
+    <i class="fas fa-heading"></i>
+    Título da Tarefa
+  <% end %>
+  <%= form.text_field :title, class: "form-input", placeholder: "Digite o título da tarefa..." %>
+</div>
+
+<div class="form-group">
+  <%= form.label :description, class: "form-label" do %>
+    <i class="fas fa-align-left"></i>
+    Descrição
+  <% end %>
+  <%= form.text_area :description, class: "form-textarea", rows: 4, placeholder: "Descreva os detalhes da tarefa..." %>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <%= form.label :priority, class: "form-label" do %>
+      <i class="fas fa-flag"></i>
+      Prioridade
+    <% end %>
+    <%= form.select :priority, 
+                    options_for_select([
+                      ['Baixa', 'baixa'],
+                      ['Média', 'média'],
+                      ['Alta', 'alta']
+                    ], @task.priority), 
+                    { prompt: "Selecione a prioridade" }, 
+                    { class: "form-select" } %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :due_date, class: "form-label" do %>
+      <i class="fas fa-calendar-alt"></i>
+      Data de Vencimento
+    <% end %>
+    <%= form.datetime_local_field :due_date, class: "form-input" %>
+  </div>
+</div>
+
+<div class="form-actions">
+  <%= form.submit (@task.new_record? ? "Criar Tarefa" : "Salvar Alterações"), 
+                  class: "btn btn-primary" %>
+  
+  <% if @task.new_record? %>
+    <%= link_to "Cancelar", board_path(@column.board), class: "btn btn-secondary" %>
+  <% else %>
+    <%= link_to "Cancelar", board_column_task_path(@task.column.board, @task.column, @task), class: "btn btn-secondary" %>
+  <% end %>
+</div>

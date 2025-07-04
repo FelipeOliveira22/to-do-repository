@@ -1,13 +1,3 @@
-/* stylelint-disable */
-@import "tailwindcss";
-@source "../../../public/*.html";
-@source "../../../app/helpers/**/*.rb";
-@source "../../../app/javascript/**/*.js";
-@source "../../../app/views/**/*";
-
-@plugin "./daisyui.js";
-
-/* Se quiser usar temas customizados, descomente abaixo */
-@plugin "./daisyui-theme.js" {
-  /* custom theme aqui (opcional) */
-}
+/* @import "tailwindcss/preflight";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities"; */

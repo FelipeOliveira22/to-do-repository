@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDoThat - Editar Tarefa</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <%= stylesheet_link_tag "task_form", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <i class="fas fa-tasks"></i>
+      ToDoDev
+    </div>
+    <div class="user">
+      <button title="Alternar tema"><i class="fas fa-sun"></i></button>
+      <div class="user-icon">B</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="form-container">
+      <!-- Cabeçalho -->
+      <div class="form-header">
+        <%= link_to board_column_task_path(@task.column.board, @task.column, @task), class: "back-button" do %>
+          <i class="fas fa-arrow-left"></i>
+          Voltar à tarefa
+        <% end %>
+        
+        <h1 class="form-title">
+          <i class="fas fa-edit"></i>
+          Editar Tarefa
+        </h1>
+      </div>
+
+      <!-- Formulário -->
+      <div class="form-content">
+        <%= form_with model: [@task.column.board, @task.column, @task], local: true, class: "task-form" do |form| %>
+          
+          <!-- Exibir erros se houver -->
+          <% if @task.errors.any? %>
+            <div class="error-messages">
+              <div class="error-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <%= pluralize(@task.errors.count, "erro") %> encontrado<%= @task.errors.count > 1 ? 's' : '' %>:
+              </div>
+              <ul class="error-list">
+                <% @task.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="form-group">
+            <%= form.label :title, class: "form-label" do %>
+              <i class="fas fa-heading"></i>
+              Título da Tarefa
+            <% end %>
+            <%= form.text_field :title, class: "form-input", placeholder: "Digite o título da tarefa..." %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :description, class: "form-label" do %>
+              <i class="fas fa-align-left"></i>
+              Descrição
+            <% end %>
+            <%= form.text_area :description, class: "form-textarea", rows: 4, placeholder: "Descreva os detalhes da tarefa..." %>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <%= form.label :priority, class: "form-label" do %>
+                <i class="fas fa-flag"></i>
+                Prioridade
+              <% end %>
+              <%= form.select :priority, 
+                              options_for_select([
+                                ['🟢 Baixa', 'baixa'],
+                                ['🟡 Média', 'media'],
+                                ['🔴 Alta', 'alta']
+                              ], @task.priority), 
+                              { prompt: "Selecione a prioridade" }, 
+                              { class: "form-select" } %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :due_date, class: "form-label" do %>
+                <i class="fas fa-calendar-alt"></i>
+                Data de Vencimento
+              <% end %>
+              <%= form.datetime_local_field :due_date, class: "form-input" %>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <%= form.submit "Salvar Alterações", class: "btn btn-primary" %>
+            <%= link_to "Cancelar", board_column_task_path(@task.column.board, @task.column, @task), class: "btn btn-secondary" %>
+          </div>
+          
+        <% end %>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

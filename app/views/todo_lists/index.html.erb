@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDoThat - Kanban Board</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <%= stylesheet_link_tag "kanban", media: "all", "data-turbo-track": "reload" %>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <i class="fas fa-tasks"></i>
+      ToDoDev
+    </div>
+    <div class="user">
+      <button title="Alternar tema"><i class="fas fa-sun"></i></button>
+      <div class="user-icon">B</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1>Quadro de Tarefas</h1>
+    <div class="board">
+      <% columns = [@todo_column, @in_progress_column, @done_column] %>
+      <% { "To Do" => @todo_tasks, "In Progress" => @in_progress_tasks, "Done" => @done_tasks }.each_with_index do |(status, tasks), index| %>
+        <% status_class = %w[todo in-progress done][index] %>
+        <% column = columns[index] %>
+
+        <div class="column <%= status_class %>">
+          <h2>
+            <i class="fas <%= ['fa-clock', 'fa-spinner', 'fa-check-circle'][index] %>"></i>
+            <%= status %>
+          </h2>
+
+          <% if column.board.present? %>
+            <%= link_to new_board_column_task_path(column.board, column), class: "add-task" do %>
+              <i class="fas fa-plus"></i> Adicionar nova tarefa
+            <% end %>
+          <% else %>
+            <p style="color:red;">Erro: coluna sem board</p>
+          <% end %>
+
+          <div class="task-list" data-column-id="<%= column.id %>">
+            <% if tasks.any? %>
+              <% tasks.order(:position).each do |task| %>
+                <div class="task" data-task-id="<%= task.id %>" onclick="goToTask(event, '<%= board_column_task_path(task.column.board, task.column, task) %>')">
+                  <div class="task-content">
+                    <div class="task-details">
+                      <div class="task-title"><%= task.title %></div>
+                      <div class="task-meta">
+                        <% if task.due_date.present? %>
+                          <div class="task-time">
+                            <i class="fas fa-clock"></i>
+                            <%= task.due_date.strftime("%H:%M") %>
+                          </div>
+                        <% end %>
+
+                        <% if task.priority.present? %>
+                          <% priority_normalized = task.priority.to_s.downcase.strip %>
+                          <div class="task-priority priority-<%= priority_normalized %>">
+                            <i class="fas fa-<%= case priority_normalized
+                                                when 'alta' then 'exclamation-triangle'
+                                                when 'media', 'média' then 'minus'
+                                                when 'baixa' then 'arrow-down'
+                                                else 'circle'
+                                                end %>"></i>
+                            <%= task.priority.to_s.capitalize %>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="empty">Nenhuma tarefa <%= status.downcase %>...</div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </main>
+
+  <script>
+    function goToTask(event, url) {
+      window.location.href = url;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const taskLists = document.querySelectorAll('.task-list');
+      
+      taskLists.forEach(function(taskList) {
+        new Sortable(taskList, {
+          group: 'kanban-tasks',
+          animation: 150,
+          ghostClass: 'task-ghost',
+          chosenClass: 'task-chosen',
+          dragClass: 'task-drag',
+          handle: '.task-title',
+          
+          onStart: function(evt) {
+            document.body.classList.add('dragging');
+          },
+          
+          onEnd: function(evt) {
+            document.body.classList.remove('dragging');
+            
+            const taskId = evt.item.getAttribute('data-task-id');
+            const newColumnId = evt.to.getAttribute('data-column-id');
+            const newPosition = evt.newIndex;
+            
+            updateTaskPosition(taskId, newColumnId, newPosition);
+          }
+        });
+      });
+    });
+
+    function updateTaskPosition(taskId, columnId, position) {
+      fetch(`/tasks/${taskId}/move_column`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          column_id: columnId,
+          position: position
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Task moved successfully');
+        } else {
+          console.error('Error moving task');
+          location.reload();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        location.reload();
+      });
+    }
+  </script>
+</body>
+</html>
