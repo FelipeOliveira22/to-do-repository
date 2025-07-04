@@ -186,3 +186,4 @@ const notificationStyles = `
 const style = document.createElement('style');
 style.textContent = notificationStyles;
 document.head.appendChild(style);
+

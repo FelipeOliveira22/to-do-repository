@@ -81,15 +81,15 @@
             <i class="fas fa-flag" style="color: #666;"></i>
             Prioridade
           <% end %>
-          <%= form.select :priority,
-              options_for_select([
-                ['🟢 Baixa', 'baixa'],
-                ['🟡 Média', 'media'],
-                ['🔴 Alta', 'alta']
-              ], @task.priority),
-              {},
-              { class: "priority-select", required: true }
-          %>
+          <%= form.select :priority, 
+  options_for_select([
+    ['🟢 Baixa', 'baixa'],
+    ['🟡 Média', 'media'],
+    ['🔴 Alta', 'alta']
+  ], @task.priority), 
+  { prompt: "Selecione a prioridade" }, 
+  { class: "form-select" } %>
+
         </div>
         <div class="form-actions">
           <%= link_to "#", class: "btn btn-secondary" do %>

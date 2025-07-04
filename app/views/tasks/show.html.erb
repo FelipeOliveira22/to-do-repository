@@ -7,6 +7,7 @@
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <%= stylesheet_link_tag "task_card", "data-turbo-track": "reload" %>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
@@ -25,7 +26,6 @@
     </div>
   </header>
 
-  <!-- Exibir mensagens de sucesso/erro -->
   <% if notice %>
     <div class="alert alert-success">
       <i class="fas fa-check-circle"></i>
@@ -44,6 +44,61 @@
     <i class="fas fa-arrow-left"></i>
     Voltar ao quadro
   </a>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const taskLists = document.querySelectorAll('.task-list');
+    
+    taskLists.forEach(function(taskList) {
+      new Sortable(taskList, {
+        group: 'kanban-tasks',
+        animation: 150,
+        ghostClass: 'task-ghost',
+        chosenClass: 'task-chosen',
+        dragClass: 'task-drag',
+        
+        onStart: function(evt) {
+          document.body.classList.add('dragging');
+        },
+        
+        onEnd: function(evt) {
+          document.body.classList.remove('dragging');
+          
+          const taskId = evt.item.getAttribute('data-task-id');
+          const newColumnId = evt.to.getAttribute('data-column-id');
+          const newPosition = evt.newIndex;
+          
+          updateTaskPosition(taskId, newColumnId, newPosition);
+        }
+      });
+    });
+  });
+
+  function updateTaskPosition(taskId, columnId, position) {
+    fetch(`/tasks/${taskId}/move_column`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        column_id: columnId,
+        position: position
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (!data.success) {
+        alert('Erro ao mover a tarefa: ' + (data.error || ''));
+      }
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+      alert('Erro ao conectar com o servidor');
+    });
+  }
+</script>
+
 
   <main class="task-details-page">
     <div class="task-card">
@@ -121,32 +176,27 @@
       <div class="actions">
         <%= link_to edit_board_column_task_path(@task.column.board, @task.column, @task), 
                     class: "btn btn-secondary",
-                    title: "Editar esta tarefa" do %>
+                    title: "Editar esta tarefa",
+                    data: { turbo: true } do %>
           <i class="fas fa-edit"></i>
           Editar
         <% end %>
         
-        <%= link_to board_column_task_path(@task.column.board, @task.column, @task), 
-                    method: :delete, 
-                    class: "btn btn-danger",
-                    title: "Excluir esta tarefa",
-                    data: { 
-                      confirm: "Tem certeza que deseja excluir a tarefa '#{@task.title}'? Esta ação não pode ser desfeita.",
-                      turbo_method: :delete 
-                    } do %>
+        <%= button_to board_column_task_path(@task.column.board, @task.column, @task), 
+                      method: :delete, 
+                      class: "btn btn-danger",
+                      title: "Excluir esta tarefa",
+                      form: { data: { turbo_confirm: "Tem certeza que deseja excluir a tarefa '#{@task.title}'? Esta ação não pode ser desfeita." } } do %>
           <i class="fas fa-trash-alt"></i>
           Excluir
         <% end %>
         
         <% unless @task.done %>
-          <%= link_to complete_board_column_task_path(@task.column.board, @task.column, @task), 
-                      method: :patch,
-                      class: "btn btn-success",
-                      title: "Marcar como concluída",
-                      data: { 
-                        confirm: "Marcar a tarefa '#{@task.title}' como concluída?",
-                        turbo_method: :patch 
-                      } do %>
+          <%= button_to complete_board_column_task_path(@task.column.board, @task.column, @task), 
+                        method: :patch,
+                        class: "btn btn-success",
+                        title: "Marcar como concluída",
+                        form: { data: { turbo_confirm: "Marcar a tarefa '#{@task.title}' como concluída?" } } do %>
             <i class="fas fa-check"></i>
             Concluir
           <% end %>
@@ -156,7 +206,14 @@
   </main>
 
   <script>
-    // Toggle theme functionality
+    function toggleTheme() {
+      // Função para alternar tema (se necessário)
+      console.log('Toggle theme');
+    }
+  </script>
+</body>
+</html>
+  <script>
     function toggleTheme() {
       const body = document.body;
       const themeIcon = document.getElementById('theme-icon');

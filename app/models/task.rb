@@ -1,9 +1,10 @@
 class Task < ApplicationRecord
-  validates :priority, inclusion: { in: ["low", "medium", "high"] }, allow_blank: true
+    PRIORITIES = %w[baixa média alta].freeze
+
+
   belongs_to :todo_list, optional: true
   belongs_to :column
 
-  PRIORITIES = %w[baixa média alta].freeze
 
   validates :title, presence: true
   validates :status, presence: true

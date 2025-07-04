@@ -6,10 +6,13 @@ Rails.application.routes.draw do
       resources :tasks do
         patch :move, on: :member
         patch :complete, on: :member
-        patch :move_column, on: :member  # ADICIONE ESTA LINHA
+        # NÃO COLOQUE o move_column aqui
       end
     end
   end
+
+  # ✅ ROTA DIRETA PARA O FETCH DO JS
+  patch "/tasks/:id/move_column", to: "tasks#move_column", as: "move_task_column"
 
   resources :todo_lists
 end
