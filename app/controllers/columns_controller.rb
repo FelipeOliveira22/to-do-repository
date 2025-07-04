@@ -1,6 +1,6 @@
 class ColumnsController < ApplicationController
   before_action :set_board
-  before_action :set_column, only: [:show, :edit, :update, :destroy]
+  before_action :set_column, only: [ :show, :edit, :update, :destroy ]
 
   # GET /boards/:board_id/columns
   def index

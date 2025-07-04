@@ -40,10 +40,11 @@
     </div>
   <% end %>
 
-  <a href="<%= root_path %>" class="back-link">
-    <i class="fas fa-arrow-left"></i>
-    Voltar ao quadro
-  </a>
+<a href="<%= kanban_board_path(@board) %>" class="back-link">
+  <i class="fas fa-arrow-left"></i>
+  Voltar ao quadro
+</a>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

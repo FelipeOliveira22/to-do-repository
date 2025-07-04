@@ -23,9 +23,15 @@
   </header>
 
   <main class="main">
+    <div style="margin-bottom: 1rem;">
+  <%= link_to boards_path, class: "btn-back" do %>
+    <i class="fas fa-arrow-left"></i> Voltar para os Boards
+  <% end %>
+</div>
+
     <h1>Quadro de Tarefas</h1>
     <div class="board">
-      <% columns = [@todo_column, @in_progress_column, @done_column] %>
+    <% columns = [@todo_column, @in_progress_column, @done_column].compact %>
       <% { "To Do" => @todo_tasks, "In Progress" => @in_progress_tasks, "Done" => @done_tasks }.each_with_index do |(status, tasks), index| %>
         <% status_class = %w[todo in-progress done][index] %>
         <% column = columns[index] %>
@@ -36,7 +42,7 @@
             <%= status %>
           </h2>
 
-          <% if column.board.present? %>
+        <% if column&.board.present? %>
             <%= link_to new_board_column_task_path(column.board, column), class: "add-task" do %>
               <i class="fas fa-plus"></i> Adicionar nova tarefa
             <% end %>

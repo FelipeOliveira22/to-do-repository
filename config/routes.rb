@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
-  root "todo_lists#index"
+  root "boards#index"
 
   resources :boards do
+    member do
+      get :kanban    # => /boards/:id/kanban para exibir o quadro Kanban do board
+    end
+
     resources :columns do
       resources :tasks do
         patch :move, on: :member
@@ -11,7 +15,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # ✅ ROTA DIRETA PARA O FETCH DO JS
+  # ✅ ROTA DIRETA PARA FETCH DO JS (drag and drop)
   patch "/tasks/:id/move_column", to: "tasks#move_column", as: "move_task_column"
 
   resources :todo_lists

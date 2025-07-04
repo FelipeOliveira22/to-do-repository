@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Boards - ToDoDev</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'board', 'data-turbolinks-track': 'reload' %>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <i class="fas fa-tasks"></i>
+      ToDoDev
+    </div>
+    <div class="user">
+      <button title="Alternar tema" onclick="toggleTheme()">
+        <i class="fas fa-sun" id="theme-icon"></i>
+      </button>
+      <div class="user-icon">
+        <%= defined?(current_user) && current_user&.name.present? ? current_user.name.first.upcase : 'U' %>
+        </div>
+
+    </div>
+  </header>
+
+  <main class="main">
+    <h1>Meus Boards</h1>
+    
+    <div class="boards-header">
+      <div></div>
+      <%= link_to new_board_path, class: "create-board-btn" do %>
+        <i class="fas fa-plus"></i>
+        Criar Novo Board
+      <% end %>
+    </div>
+
+    <div class="boards-grid">
+      <% if @boards.any? %>
+        <% @boards.each do |board| %>
+          <div class="board-card" onclick="window.location.href='<%= board_path(board) %>'">
+            <div class="board-title">
+              <i class="fas fa-laptop-code"></i>
+              <%= board.name %>
+            </div>
+            <div class="board-info">
+              <%= board.description.presence || "Sem descrição" %>
+            </div>
+            <div class="board-stats">
+              <div class="stat">
+                <i class="fas fa-tasks"></i>
+                <span><%= board.tasks.count %> tarefas</span>
+              </div>
+              <div class="stat">
+                <i class="fas fa-clock"></i>
+                <span><%= board.tasks.where(status: 'pending').count %> pendentes</span>
+              </div>
+            </div>
+            <div class="board-actions" onclick="event.stopPropagation()">
+              <%= link_to edit_board_path(board), class: "edit-btn", title: "Editar" do %>
+                <i class="fas fa-edit"></i>
+              <% end %>
+              <button class="delete-btn" title="Excluir" onclick="deleteBoard(<%= board.id %>)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>Nenhum board criado ainda</h3>
+          <p>Crie seu primeiro board para começar a organizar suas tarefas!</p>
+        </div>
+      <% end %>
+    </div>
+  </main>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.classList.add('dark-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    function deleteBoard(id) {
+      if (confirm('Tem certeza que deseja excluir este board? Esta ação não pode ser desfeita.')) {
+        fetch(`/boards/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          }
+        }).then(() => {
+          location.reload();
+        });
+      }
+    }
+
+    // Carrega tema salvo
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    });
+  </script>
+</body>
+</html>
