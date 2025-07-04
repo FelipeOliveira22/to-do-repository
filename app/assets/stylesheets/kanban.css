@@ -167,7 +167,8 @@ main h1 {
   transition: all 0.3s ease;
   border: 1px solid #333;
   position: relative;
-  overflow: visible; /* Mudança importante */
+  cursor: pointer;
+  padding: 16px;
 }
 
 .task:hover {
@@ -177,25 +178,15 @@ main h1 {
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-/* Nova estrutura para área clicável */
-.task-clickable {
-  padding: 16px;
-  cursor: pointer;
-  position: relative;
-  padding-right: 80px; /* Espaço para os botões */
-}
-
 .task-content {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  pointer-events: none; /* Evita conflitos de clique */
 }
 
 .task-checkbox {
   margin-top: 4px;
   min-width: 18px;
-  pointer-events: auto; /* Reativa clique no checkbox */
 }
 
 .checkbox {
@@ -286,58 +277,6 @@ main h1 {
   border: 1px solid #22c55e;
 }
 
-/* BOTÕES DE AÇÃO - CORRIGIDOS */
-.task-actions {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  gap: 6px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 10;
-  pointer-events: auto;
-} /* ← ESTA CHAVE FALTAVA */
-
-.task:hover .task-actions {
-  opacity: 1;
-}
-
-
-.task-action {
-  background: #333;
-  border: 1px solid #444;
-  color: #ccc;
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  height: 32px;
-}
-
-.task-action:hover {
-  background: #444;
-  color: #fff;
-  transform: scale(1.1);
-}
-
-.task-action.edit:hover {
-  background: #3b82f6;
-  border-color: #3b82f6;
-}
-
-.task-action.delete:hover {
-  background: #ef4444;
-  border-color: #ef4444;
-}
-
-/* Formulário inline */
 .task-form {
   display: flex;
   align-items: center;
@@ -363,19 +302,98 @@ main h1 {
   body {
     padding: 100px 20px 40px;
   }
-  
-  .task-actions {
-    opacity: 1;
-    position: relative;
-    top: auto;
-    right: auto;
-    margin-top: 12px;
-    justify-content: flex-end;
-  }
-  
-  .task-clickable {
-    padding-right: 16px;
-  }
-  
 }
 
+/* ADICIONE ESTAS CLASSES AO SEU CSS EXISTENTE */
+
+.task-list {
+  min-height: 100px;
+  flex: 1;
+}
+
+/* Estados do drag and drop */
+.task-ghost {
+  opacity: 0.5;
+  background: #444 !important;
+  border: 2px dashed #666 !important;
+}
+
+.task-chosen {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  cursor: grabbing !important;
+}
+
+.task-drag {
+  transform: rotate(3deg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+}
+
+/* Melhorar cursor durante drag */
+.dragging .task {
+  cursor: grabbing;
+}
+
+.task-title {
+  cursor: grab;
+}
+
+.task-title:active {
+  cursor: grabbing;
+}
+
+/* Feedback visual nas colunas durante drag */
+.column {
+  transition: all 0.3s ease;
+}
+
+.dragging .column {
+  background: #252525;
+}
+
+.dragging .column:hover {
+  background: #2a2a2a;
+  border-color: #3b82f6;
+}
+
+/* Adicione estas classes para feedback visual */
+.moved-to-todo {
+  border-left: 2px solid #3b82f6;
+}
+
+.moved-to-in-progress {
+  border-left: 2px solid #6366f1;
+}
+
+.moved-to-done {
+  border-left: 2px solid #10b981;
+}
+
+/* Animação suave para tasks movidas */
+.task {
+  transition: all 0.3s ease;
+}
+
+/* Melhorar o feedback visual durante o drag */
+.task-list {
+  min-height: 120px;
+  transition: background-color 0.3s ease;
+}
+
+.task-list:empty::after {
+  content: '';
+  display: block;
+  height: 100px;
+}
+
+/* Destacar coluna de destino durante drag */
+.dragging .task-list {
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 8px;
+  border: 1px dashed transparent;
+}
+
+.dragging .task-list:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}

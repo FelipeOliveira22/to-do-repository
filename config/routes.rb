@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     resources :columns do
       resources :tasks do
         patch :move, on: :member
+        patch :complete, on: :member
+        patch :move_column, on: :member  # ADICIONE ESTA LINHA
       end
     end
   end

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= @task.title %> - Detalhes da Tarefa</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <%= stylesheet_link_tag "task_card", "data-turbo-track": "reload" %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <i class="fas fa-tasks"></i>
+      ToDoDev
+    </div>
+    <div class="user">
+      <button title="Alternar tema" onclick="toggleTheme()">
+        <i class="fas fa-sun" id="theme-icon"></i>
+      </button>
+      <div class="user-icon">B</div>
+    </div>
+  </header>
+
+  <!-- Exibir mensagens de sucesso/erro -->
+  <% if notice %>
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      <%= alert %>
+    </div>
+  <% end %>
+
+  <a href="<%= root_path %>" class="back-link">
+    <i class="fas fa-arrow-left"></i>
+    Voltar ao quadro
+  </a>
+
+  <main class="task-details-page">
+    <div class="task-card">
+      <h1>
+        <i class="fas fa-sticky-note"></i> 
+        <%= @task.title %>
+      </h1>
+
+      <div class="task-info">
+        <p>
+          <strong><i class="fas fa-align-left"></i> Descrição:</strong> 
+          <%= @task.description.presence || "Sem descrição fornecida." %>
+        </p>
+
+        <p>
+          <strong><i class="fas fa-info-circle"></i> Status:</strong> 
+          <%= @task.status.presence || "Não definido" %>
+        </p>
+
+        <p>
+          <strong><i class="fas fa-flag"></i> Prioridade:</strong>
+          <% if @task.priority.present? %>
+            <span class="priority <%= @task.priority.downcase %>">
+              <%= @task.priority.capitalize %>
+            </span>
+          <% else %>
+            <span class="no-priority">Não definida</span>
+          <% end %>
+        </p>
+
+        <p>
+          <strong><i class="fas fa-calendar-alt"></i> Prazo:</strong>
+          <% if @task.due_date.present? %>
+            <span class="due-date <%= 'overdue' if @task.due_date < Time.current %>">
+              <%= @task.due_date.strftime("%d/%m/%Y %H:%M") %>
+              <% if @task.due_date < Time.current %>
+                <i class="fas fa-exclamation-triangle"></i>
+              <% end %>
+            </span>
+          <% else %>
+            <span class="no-date">Sem prazo definido</span>
+          <% end %>
+        </p>
+
+        <p>
+          <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
+          <% if @task.done.nil? %>
+            <span class="status-unknown">Não especificado</span>
+          <% else %>
+            <span class="status-<%= @task.done ? 'done' : 'pending' %>">
+              <% if @task.done %>
+                <i class="fas fa-check"></i> Sim
+              <% else %>
+                <i class="fas fa-clock"></i> Não
+              <% end %>
+            </span>
+          <% end %>
+        </p>
+
+        <% if @task.created_at.present? %>
+          <p>
+            <strong><i class="fas fa-plus-circle"></i> Criada em:</strong>
+            <%= @task.created_at.strftime("%d/%m/%Y %H:%M") %>
+          </p>
+        <% end %>
+
+        <% if @task.updated_at.present? && @task.updated_at != @task.created_at %>
+          <p>
+            <strong><i class="fas fa-edit"></i> Última atualização:</strong>
+            <%= @task.updated_at.strftime("%d/%m/%Y %H:%M") %>
+          </p>
+        <% end %>
+      </div>
+
+      <div class="actions">
+        <%= link_to edit_board_column_task_path(@task.column.board, @task.column, @task), 
+                    class: "btn btn-secondary",
+                    title: "Editar esta tarefa" do %>
+          <i class="fas fa-edit"></i>
+          Editar
+        <% end %>
+        
+        <%= link_to board_column_task_path(@task.column.board, @task.column, @task), 
+                    method: :delete, 
+                    class: "btn btn-danger",
+                    title: "Excluir esta tarefa",
+                    data: { 
+                      confirm: "Tem certeza que deseja excluir a tarefa '#{@task.title}'? Esta ação não pode ser desfeita.",
+                      turbo_method: :delete 
+                    } do %>
+          <i class="fas fa-trash-alt"></i>
+          Excluir
+        <% end %>
+        
+        <% unless @task.done %>
+          <%= link_to complete_board_column_task_path(@task.column.board, @task.column, @task), 
+                      method: :patch,
+                      class: "btn btn-success",
+                      title: "Marcar como concluída",
+                      data: { 
+                        confirm: "Marcar a tarefa '#{@task.title}' como concluída?",
+                        turbo_method: :patch 
+                      } do %>
+            <i class="fas fa-check"></i>
+            Concluir
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Toggle theme functionality
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.classList.add('dark-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    });
+
+    // Auto-hide alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        setTimeout(() => {
+          alert.style.transition = 'opacity 0.5s';
+          alert.style.opacity = '0';
+          setTimeout(() => {
+            alert.remove();
+          }, 500);
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>
