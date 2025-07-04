@@ -151,6 +151,45 @@
         location.reload();
       });
     }
+    // Adicione este script no seu arquivo HTML do Rails ou em um arquivo JS separado
+
+// Função para alternar tema
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  document.documentElement.setAttribute('data-theme', newTheme);
+  
+  // Atualizar ícone do botão
+  const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
+  if (themeButton) {
+    themeButton.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  }
+  
+  // Salvar preferência no localStorage
+  localStorage.setItem('theme', newTheme);
+}
+
+// Carregar tema salvo
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
+  if (themeButton) {
+    themeButton.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  }
+}
+
+// Adicionar event listener ao botão
+document.addEventListener('DOMContentLoaded', function() {
+  loadTheme();
+  
+  const themeButton = document.querySelector('.user button[title="Alternar tema"]');
+  if (themeButton) {
+    themeButton.addEventListener('click', toggleTheme);
+  }
+});
   </script>
 </body>
 </html>
