@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :set_board_and_column, only: [ :new, :create, :show, :edit, :update, :destroy, :complete ]
+  before_action :set_board_and_column
   before_action :set_task, only: [ :show, :edit, :update, :destroy, :complete ]
 
   def new
@@ -11,25 +11,21 @@ class TasksController < ApplicationController
     @task.status = @column.name
 
     if @task.save
-    redirect_to kanban_board_path(@board), notice: "Tarefa criada com sucesso!"
+      redirect_to kanban_board_path(@board), notice: "Tarefa criada com sucesso!"
     else
       puts @task.errors.full_messages
       render :new, status: :unprocessable_entity
     end
   end
 
-  def show
-  end
+  def show; end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @task.update(task_params)
-      redirect_to board_column_task_path(@board, @column, @task),
-                  notice: "Tarefa atualizada com sucesso!"
+      redirect_to board_column_task_path(@board, @column, @task), notice: "Tarefa atualizada com sucesso!"
     else
-      puts "Erros da tarefa:"
       puts @task.errors.full_messages
       render :edit, status: :unprocessable_entity
     end
@@ -37,34 +33,32 @@ class TasksController < ApplicationController
 
   def complete
     if @task.update_columns(done: true, updated_at: Time.current)
-      redirect_to board_column_task_path(@board, @column, @task),
-                  notice: "Tarefa marcada como concluída com sucesso!"
+      redirect_to board_column_task_path(@board, @column, @task), notice: "Tarefa marcada como concluída!"
     else
-      redirect_to board_column_task_path(@board, @column, @task),
-                  alert: "Erro ao concluir tarefa!"
+      redirect_to board_column_task_path(@board, @column, @task), alert: "Erro ao concluir tarefa!"
     end
   end
 
   def destroy
     @task.destroy
-    redirect_to root_path, notice: "Tarefa excluída com sucesso."
+    redirect_to kanban_board_path(@board), notice: "Tarefa excluída com sucesso."
   end
 
   def move_column
-    @task = Task.find(params[:id])
-    @target_column = Column.find(params[:column_id])
+    @task = current_user.boards.joins(columns: :tasks).where(tasks: { id: params[:id] }).first&.tasks&.find(params[:id])
+    @target_column = current_user.boards.joins(:columns).where(columns: { id: params[:column_id] }).first&.columns&.find(params[:column_id])
+
+    raise ActiveRecord::RecordNotFound unless @task && @target_column
+
     old_column = @task.column
     new_position = params[:position].to_i
 
     ActiveRecord::Base.transaction do
       if old_column != @target_column
-        old_column.tasks.where("position > ?", @task.position)
-                        .update_all("position = position - 1")
+        old_column.tasks.where("position > ?", @task.position).update_all("position = position - 1")
       end
 
-      @target_column.tasks.where("position >= ?", new_position)
-                          .where.not(id: @task.id)
-                          .update_all("position = position + 1")
+      @target_column.tasks.where("position >= ?", new_position).where.not(id: @task.id).update_all("position = position + 1")
 
       @task.update!(
         column: @target_column,
@@ -82,34 +76,33 @@ class TasksController < ApplicationController
   private
 
   def set_board_and_column
-    @board = Board.find(params[:board_id])
+    @board = current_user.boards.find(params[:board_id])
     @column = @board.columns.find(params[:column_id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to boards_path, alert: "Recurso não encontrado ou acesso negado."
   end
 
   def set_task
     @task = @column.tasks.find(params[:id])
   end
 
-def task_params
-  cleaned_params = params.require(:task).permit(:title, :due_date, :description, :priority, :done, :status)
+  def task_params
+    cleaned_params = params.require(:task).permit(:title, :due_date, :description, :priority, :done, :status)
 
-  if cleaned_params[:priority].present?
-    normalized = cleaned_params[:priority].downcase.strip
+    if cleaned_params[:priority].present?
+      normalized = cleaned_params[:priority].downcase.strip
 
-    case normalized
-    when "low", "baixa"
-      cleaned_params[:priority] = "baixa"
-    when "medium", "media", "média"
-      cleaned_params[:priority] = "media"
-    when "high", "alta"
-      cleaned_params[:priority] = "alta"
+      cleaned_params[:priority] =
+        case normalized
+        when "low", "baixa" then "baixa"
+        when "medium", "media", "média" then "media"
+        when "high", "alta" then "alta"
+        else nil
+        end
     else
       cleaned_params[:priority] = nil
     end
-  else
-    cleaned_params[:priority] = nil
-  end
 
-  cleaned_params
-end
+    cleaned_params
+  end
 end

@@ -1,5 +1,6 @@
 # app/models/board.rb
 class Board < ApplicationRecord
+  belongs_to :user         # ADICIONADO
   has_many :columns, dependent: :destroy
   has_many :tasks, through: :columns
 

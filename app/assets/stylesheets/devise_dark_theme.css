@@ -1,0 +1,318 @@
+/* app/assets/stylesheets/devise_dark_theme.css */
+
+/* Reset e configurações globais para todas as páginas do Devise */
+.devise-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Container principal que envolve todos os formulários */
+.devise-wrapper {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    min-width: 400px;
+    max-width: 450px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease-out;
+    width: 100%;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cabeçalho personalizado para cada página */
+.devise-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.devise-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    background: linear-gradient(45deg, #ffffff, #a0a0a0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+
+.devise-header p {
+    color: #888;
+    font-size: 14px;
+}
+
+/* Estilização dos campos */
+.field {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #cccccc;
+    font-size: 14px;
+}
+
+.field input[type="email"],
+.field input[type="password"],
+.field input[type="text"],
+.field input[type="password_confirmation"] {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.field input[type="email"]:focus,
+.field input[type="password"]:focus,
+.field input[type="text"]:focus,
+.field input[type="password_confirmation"]:focus {
+    outline: none;
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.field input::placeholder {
+    color: #666;
+}
+
+/* Checkbox customizado */
+.field input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.2);
+    accent-color: #4a9eff;
+}
+
+/* Seção "Lembrar de mim" */
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    color: #cccccc;
+    font-size: 14px;
+}
+
+/* Botões de ação */
+.actions {
+    margin-bottom: 25px;
+}
+
+.actions input[type="submit"] {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(45deg, #4a9eff, #0066cc);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+}
+
+.actions input[type="submit"]:hover {
+    background: linear-gradient(45deg, #0066cc, #4a9eff);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+}
+
+.actions input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Links de navegação */
+.devise-links {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.devise-links a {
+    color: #4a9eff;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 0 5px;
+    transition: color 0.3s ease;
+}
+
+.devise-links a:hover {
+    color: #66b3ff;
+    text-decoration: underline;
+}
+
+.devise-links p {
+    margin: 10px 0;
+    color: #888;
+    font-size: 14px;
+}
+
+/* Mensagens de flash */
+.notice, .alert {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.notice {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    color: #00ff88;
+}
+
+.alert {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    color: #ff6b6b;
+}
+
+/* Tratamento de erros */
+.error-explanation {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.error-explanation h2 {
+    color: #ff6b6b;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.error-explanation ul {
+    color: #ff9999;
+    font-size: 14px;
+    margin-left: 20px;
+}
+
+.error-explanation li {
+    margin: 4px 0;
+}
+
+/* Campos com erro */
+.field_with_errors input {
+    border-color: #ff6b6b !important;
+    background: rgba(255, 107, 107, 0.1) !important;
+}
+
+.field_with_errors label {
+    color: #ff6b6b !important;
+}
+
+/* Estilização especial para campos de confirmação */
+.confirmation-field {
+    margin-top: 15px;
+}
+
+/* Texto de ajuda */
+.help-text {
+    color: #888;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .devise-wrapper {
+        min-width: 300px;
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    .devise-header h2 {
+        font-size: 24px;
+    }
+    
+    .field input[type="email"],
+    .field input[type="password"],
+    .field input[type="text"],
+    .field input[type="password_confirmation"] {
+        font-size: 16px; /* Previne zoom no iOS */
+    }
+}
+
+/* Estilos específicos para diferentes páginas */
+.devise-sessions .devise-header h2::before {
+    content: "🔐 ";
+}
+
+.devise-registrations .devise-header h2::before {
+    content: "👤 ";
+}
+
+.devise-passwords .devise-header h2::before {
+    content: "🔑 ";
+}
+
+.devise-confirmations .devise-header h2::before {
+    content: "📧 ";
+}
+
+/* Animações adicionais */
+.field {
+    transition: transform 0.2s ease;
+}
+
+.field:focus-within {
+    transform: translateY(-2px);
+}
+
+/* Loading state para o botão */
+.actions input[type="submit"]:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Melhorias de acessibilidade */
+.field input:focus {
+    outline: 2px solid #4a9eff;
+    outline-offset: 2px;
+}
+
+/* Dark scrollbar para webkit */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
