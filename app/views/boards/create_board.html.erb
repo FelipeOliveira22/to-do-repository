@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Board - ToDoDev</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'board', 'data-turbolinks-track': 'reload' %>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <i class="fas fa-tasks"></i>
+      ToDoDev
+    </div>
+    <div class="user">
+      <button title="Alternar tema" onclick="toggleTheme()">
+        <i class="fas fa-sun" id="theme-icon"></i>
+      </button>
+      <div class="user-icon">
+        <%= defined?(current_user) && current_user&.name.present? ? current_user.name.first.upcase : 'U' %>
+        </div>
+
+    </div>
+  </header>
+
+  <main class="main">
+    <%= link_to boards_path, class: "back-link" do %>
+      <i class="fas fa-arrow-left"></i>
+      Voltar aos boards
+    <% end %>
+
+    <div class="form-container">
+      <h1>
+        <i class="fas fa-plus-circle"></i>
+        Criar Novo Board
+      </h1>
+
+      <%= form_with(model: @board, local: true) do |form| %>
+        <% if @board.errors.any? %>
+          <div class="error-messages">
+            <h4><%= pluralize(@board.errors.count, "erro") %> impediram que o board fosse salvo:</h4>
+            <ul>
+              <% @board.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="form-group">
+          <%= form.label :name, "Nome do Board" %>
+          <%= form.text_field :name, placeholder: "Ex: Projeto React, Estudos Ruby, etc.", required: true %>
+          <div class="form-hint">
+            Escolha um nome descritivo para seu board
+          </div>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :description, "Descrição (opcional)" %>
+          <%= form.text_area :description, rows: 3, placeholder: "Descreva brevemente o propósito deste board..." %>
+          <div class="form-hint">
+            Uma breve descrição pode ajudar a identificar o board
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <%= form.submit "Criar Board", class: "btn btn-primary" %>
+          <%= link_to boards_path, class: "btn btn-secondary" do %>
+            <i class="fas fa-times"></i>
+            Cancelar
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.classList.add('dark-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Carrega tema salvo
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    });
+  </script>
+</body>
+</html>
