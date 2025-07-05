@@ -74,12 +74,15 @@
                             </span>
                           </div>
                         <% elsif status == "Done" %>
-                          <div class="task-completed-label">
+                          <div class="task-countdown completed"
+                              data-due-date="<%= task.due_date&.iso8601 || Time.zone.now.iso8601 %>"
+                              data-task-done="true">
                             <i class="fas fa-check-circle"></i>
-                            Tarefa concluída
+                            <span class="countdown-timer">
+                              <span class="completed-text">TASK CONCLUÍDA</span>
+                            </span>
                           </div>
                         <% end %>
-
 
 
 
@@ -218,18 +221,15 @@
         })
       })
       .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          console.log('Task moved successfully');
-        } else {
-          console.error('Error moving task');
-          location.reload();
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        location.reload();
-      });
+.then(data => {
+  if (data.success) {
+    location.reload(); // 🔄 Força o recarregamento após sucesso
+  } else {
+    console.error('Erro ao mover tarefa');
+    location.reload(); // Recarrega mesmo com erro, por segurança
+  }
+})
+;
     }
 
     // Função para alternar tema
