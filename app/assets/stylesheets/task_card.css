@@ -1,6 +1,73 @@
+/* Variáveis de cores para os dois temas */
+:root {
+  /* Tema claro (padrão) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #ffffff;
+  --bg-quaternary: #f1f5f9;
+  --bg-hover: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-tertiary: #94a3b8;
+  --shadow-primary: rgba(0,0,0,0.1);
+  --shadow-secondary: rgba(0,0,0,0.05);
+  --shadow-tertiary: rgba(0,0,0,0.15);
+  --accent-blue: #3b82f6;
+  --accent-purple: #6366f1;
+  --accent-green: #10b981;
+  --accent-red: #dc2626;
+  --accent-orange: #f59e0b;
+  --accent-yellow: #22c55e;
+  --accent-teal: #14b8a6;
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #48bb78, #38a169);
+  --gradient-tertiary: linear-gradient(135deg, #ed8936, #dd6b20);
+  --gradient-quaternary: linear-gradient(135deg, #f56565, #e53e3e);
+  --backdrop-filter: blur(10px);
+  --overlay-light: rgba(255, 255, 255, 0.95);
+  --overlay-medium: rgba(255, 255, 255, 0.2);
+  --overlay-dark: rgba(255, 255, 255, 0.3);
+}
+
+/* Tema escuro */
+[data-theme="dark"], .dark-theme {
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #2d3748;
+  --bg-quaternary: #4a5568;
+  --bg-hover: #4a5568;
+  --text-primary: #e2e8f0;
+  --text-secondary: #cbd5e0;
+  --text-tertiary: #a0aec0;
+  --text-muted: #718096;
+  --border-primary: #4a5568;
+  --border-secondary: #2d3748;
+  --border-tertiary: #718096;
+  --shadow-primary: rgba(0,0,0,0.3);
+  --shadow-secondary: rgba(0,0,0,0.2);
+  --shadow-tertiary: rgba(0,0,0,0.4);
+  --accent-blue: #63b3ed;
+  --accent-purple: #9f7aea;
+  --accent-green: #68d391;
+  --accent-red: #fc8181;
+  --accent-orange: #fbb969;
+  --accent-yellow: #68d391;
+  --accent-teal: #4fd1c7;
+  --gradient-primary: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  --gradient-secondary: linear-gradient(135deg, #48bb78, #38a169);
+  --gradient-tertiary: linear-gradient(135deg, #ed8936, #dd6b20);
+  --gradient-quaternary: linear-gradient(135deg, #f56565, #e53e3e);
+  --backdrop-filter: blur(10px);
+  --overlay-light: rgba(45, 55, 72, 0.95);
+  --overlay-medium: rgba(45, 55, 72, 0.7);
+  --overlay-dark: rgba(45, 55, 72, 0.9);
+}
+
 /* Reset e configurações básicas */
-
-
 * {
   margin: 0;
   padding: 0;
@@ -9,24 +76,26 @@
 
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   min-height: 100vh;
-  color: #333;
+  color: var(--text-primary);
   line-height: 1.6;
+  transition: all 0.3s ease;
 }
 
 /* Header */
 header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: var(--overlay-light);
+  backdrop-filter: var(--backdrop-filter);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 20px var(--shadow-primary);
   position: sticky;
   top: 0;
   z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .brand {
@@ -35,7 +104,8 @@ header {
   gap: 0.5rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #667eea;
+  color: var(--accent-blue);
+  transition: color 0.3s ease;
 }
 
 .brand i {
@@ -52,7 +122,7 @@ header {
   background: none;
   border: none;
   font-size: 1.2rem;
-  color: #667eea;
+  color: var(--accent-blue);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
@@ -60,15 +130,15 @@ header {
 }
 
 .user button:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: var(--bg-hover);
   transform: rotate(180deg);
 }
 
 .user-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
+  background: var(--gradient-primary);
+  color: var(--text-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -87,21 +157,22 @@ header {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: white;
+  color: var(--text-primary);
   text-decoration: none;
   font-weight: 500;
   margin: 2rem 0 1rem 2rem;
   padding: 0.75rem 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--overlay-medium);
   border-radius: 50px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: var(--backdrop-filter);
   transition: all 0.3s ease;
+  border: 1px solid var(--border-secondary);
 }
 
 .back-link:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--overlay-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px var(--shadow-secondary);
 }
 
 .back-link i {
@@ -122,15 +193,17 @@ header {
 }
 
 .task-card {
-  background: white;
+  background: var(--bg-secondary);
   border-radius: 20px;
   padding: 3rem;
   max-width: 800px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px var(--shadow-primary);
+  backdrop-filter: var(--backdrop-filter);
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--border-primary);
+  transition: all 0.3s ease;
 }
 
 .task-card::before {
@@ -140,32 +213,34 @@ header {
   left: 0;
   right: 0;
   height: 5px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: var(--gradient-primary);
 }
 
 .task-card h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: var(--text-primary);
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
+  transition: color 0.3s ease;
 }
 
 .task-card h1 i {
-  color: #667eea;
+  color: var(--accent-blue);
   font-size: 2rem;
 }
 
 .task-card p {
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
-  color: #4a5568;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
 }
 
 .task-card p strong {
-  color: #2d3748;
+  color: var(--text-primary);
   font-weight: 600;
   display: inline-block;
   min-width: 120px;
@@ -179,21 +254,23 @@ header {
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
 
 .priority.baixa {
-  background: linear-gradient(135deg, #48bb78, #38a169);
+  background: var(--gradient-secondary);
   color: white;
 }
 
 .priority.media,
 .priority.média {
-  background: linear-gradient(135deg, #ed8936, #dd6b20);
+  background: var(--gradient-tertiary);
   color: white;
 }
 
 .priority.alta {
-  background: linear-gradient(135deg, #f56565, #e53e3e);
+  background: var(--gradient-quaternary);
   color: white;
 }
 
@@ -222,7 +299,7 @@ header {
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #4299e1, #3182ce);
+  background: linear-gradient(135deg, var(--accent-blue), #3182ce);
   color: white;
 }
 
@@ -233,30 +310,111 @@ header {
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #f56565, #e53e3e);
+  background: linear-gradient(135deg, var(--accent-red), #c53030);
   color: white;
 }
 
 .btn-danger:hover {
-  background: linear-gradient(135deg, #e53e3e, #c53030);
+  background: linear-gradient(135deg, #c53030, #a91e1e);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--accent-green), #38a169);
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #38a169, #2f855a);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 /* Status styling */
 .task-card p:has(strong:contains("Status")) {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(59, 130, 246, 0.1);
   padding: 1rem;
   border-radius: 10px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--accent-blue);
 }
 
 /* Date styling */
 .task-card p:has(strong:contains("Prazo")) {
-  background: rgba(118, 75, 162, 0.1);
+  background: rgba(99, 102, 241, 0.1);
   padding: 1rem;
   border-radius: 10px;
-  border-left: 4px solid #764ba2;
+  border-left: 4px solid var(--accent-purple);
+}
+
+/* Additional status styling */
+.status-done {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+.status-pending {
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+.status-unknown {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.no-priority, .no-date {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.due-date.overdue {
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+.due-date.overdue i {
+  margin-left: 0.5rem;
+  animation: pulse 1s infinite;
+}
+
+.task-info p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-info p strong {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-info p strong i {
+  color: var(--accent-blue);
+  width: 20px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.task-card {
+  animation: fadeIn 0.6s ease-out;
 }
 
 /* Responsive Design */
@@ -309,159 +467,27 @@ header {
   }
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.task-card {
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* Additional status styling */
-.status-done {
-  color: #48bb78;
-  font-weight: 600;
-}
-
-.status-pending {
-  color: #ed8936;
-  font-weight: 600;
-}
-
-.status-unknown {
-  color: #a0aec0;
-  font-style: italic;
-}
-
-.no-priority, .no-date {
-  color: #a0aec0;
-  font-style: italic;
-}
-
-.due-date.overdue {
-  color: #f56565;
-  font-weight: 600;
-}
-
-.due-date.overdue i {
-  margin-left: 0.5rem;
-  animation: pulse 1s infinite;
-}
-
-.btn-success {
-  background: linear-gradient(135deg, #48bb78, #38a169);
-  color: white;
-}
-
-.btn-success:hover {
-  background: linear-gradient(135deg, #38a169, #2f855a);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
-}
-
-.task-info p {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.task-info p strong {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.task-info p strong i {
-  color: #667eea;
-  width: 20px;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-/* Dark theme class-based styling */
-.dark-theme {
-  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-}
-
-.dark-theme header {
-  background: rgba(45, 55, 72, 0.95);
-  color: #e2e8f0;
-}
-
-.dark-theme .brand {
-  color: #81e6d9;
-}
-
-.dark-theme .user button {
-  color: #81e6d9;
-}
-
-.dark-theme .user button:hover {
-  background: rgba(129, 230, 217, 0.1);
-}
-
-.dark-theme .back-link {
-  color: #e2e8f0;
-  background: rgba(45, 55, 72, 0.7);
-}
-
-.dark-theme .back-link:hover {
-  background: rgba(45, 55, 72, 0.9);
-}
-
-.dark-theme .task-card {
-  background: #2d3748;
-  color: #e2e8f0;
-}
-
-.dark-theme .task-card h1 {
-  color: #e2e8f0;
-}
-
-.dark-theme .task-card p {
-  color: #cbd5e0;
-}
-
-.dark-theme .task-card p strong {
-  color: #e2e8f0;
-}
-
-.dark-theme .task-card p strong i {
-  color: #81e6d9;
-}
-
-/* Dark mode support */
+/* Suporte para preferência de tema do sistema */
 @media (prefers-color-scheme: dark) {
-  body {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  }
-  
-  .task-card {
-    background: #2d3748;
-    color: #e2e8f0;
-  }
-  
-  .task-card h1 {
-    color: #e2e8f0;
-  }
-  
-  .task-card p {
-    color: #cbd5e0;
-  }
-  
-  .task-card p strong {
-    color: #e2e8f0;
+  :root {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --bg-tertiary: #2d3748;
+    --bg-quaternary: #4a5568;
+    --bg-hover: #4a5568;
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e0;
+    --text-tertiary: #a0aec0;
+    --text-muted: #718096;
+    --border-primary: #4a5568;
+    --border-secondary: #2d3748;
+    --border-tertiary: #718096;
+    --shadow-primary: rgba(0,0,0,0.3);
+    --shadow-secondary: rgba(0,0,0,0.2);
+    --shadow-tertiary: rgba(0,0,0,0.4);
+    --gradient-primary: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    --overlay-light: rgba(45, 55, 72, 0.95);
+    --overlay-medium: rgba(45, 55, 72, 0.7);
+    --overlay-dark: rgba(45, 55, 72, 0.9);
   }
 }
