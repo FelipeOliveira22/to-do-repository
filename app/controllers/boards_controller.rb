@@ -1,9 +1,9 @@
 class BoardsController < ApplicationController
-  before_action :set_board, only: [:show, :edit, :update, :destroy, :kanban]
+  before_action :set_board, only: [ :show, :edit, :update, :destroy, :kanban ]
 
   def index
-    @boards = Board.all
-    render "boards/boards"  # usa boards.html.erb
+    @boards = current_user.boards.includes(:columns, :tasks)
+    render "boards/boards"
   end
 
   def show
@@ -12,22 +12,23 @@ class BoardsController < ApplicationController
 
   def new
     @board = Board.new
-    render "boards/create_board"  # usa create_board.html.erb
+    render "boards/create_board"
   end
 
   def create
-    @board = Board.new(board_params)
-    
+    @board = current_user.boards.build(board_params)
+
     if @board.save
       create_default_columns
       redirect_to kanban_board_path(@board), notice: "Board criado com sucesso!"
     else
-      render "boards/create_board"  # renderiza a mesma view com os erros
+      render "boards/create_board"
     end
   end
 
+
   def edit
-    render "boards/create_board"  # se quiser usar o mesmo form da criação
+    render "boards/create_board"
   end
 
   def update
@@ -61,7 +62,9 @@ end
   private
 
   def set_board
-    @board = Board.find(params[:id])
+    @board = current_user.boards.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to boards_path, alert: "Board não encontrado ou acesso não autorizado."
   end
 
   def board_params
@@ -69,7 +72,7 @@ end
   end
 
   def create_default_columns
-    default_columns = ["A Fazer", "Em Progresso", "Concluído"]
+    default_columns = [ "A Fazer", "Em Progresso", "Concluído" ]
     default_columns.each do |column_name|
       @board.columns.create!(name: column_name)
     end

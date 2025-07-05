@@ -22,8 +22,9 @@
         <i class="fas fa-sun" id="theme-icon"></i>
       </button>
       <div class="user-icon">
-        <%= defined?(current_user) && current_user&.name.present? ? current_user.name.first.upcase : 'U' %>
-        </div>
+  <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
+</div>
+
 
     </div>
   </header>

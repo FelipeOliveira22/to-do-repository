@@ -10,23 +10,27 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'board', 'data-turbolinks-track': 'reload' %>
-</head>
-<body>
-  <header>
+<header>
+  <div class="brand-logout">
     <div class="brand">
       <i class="fas fa-tasks"></i>
       ToDoDev
     </div>
-    <div class="user">
-      <button title="Alternar tema" onclick="toggleTheme()">
-  <i class="fas fa-moon" id="theme-icon"></i>
-</button>
-      <div class="user-icon">
-        <%= defined?(current_user) && current_user&.name.present? ? current_user.name.first.upcase : 'U' %>
-        </div>
+    <% if user_signed_in? %>
+      <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "logout-btn" %>
+    <% end %>
+  </div>
 
+  <div class="user">
+    <button title="Alternar tema" onclick="toggleTheme()">
+      <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+    <div class="user-icon">
+      <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
     </div>
-  </header>
+  </div>
+</header>
+
 
   <main class="main">
     <h1>Meus Boards</h1>

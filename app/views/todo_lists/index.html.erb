@@ -18,7 +18,10 @@
     </div>
     <div class="user">
       <button title="Alternar tema"><i class="fas fa-sun"></i></button>
-      <div class="user-icon">B</div>
+      <div class="user-icon">
+  <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
+</div>
+
     </div>
   </header>
 
