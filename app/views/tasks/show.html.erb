@@ -145,19 +145,15 @@
         </p>
 
         <p>
-          <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
-          <% if @task.done.nil? %>
-            <span class="status-unknown">Não especificado</span>
-          <% else %>
-            <span class="status-<%= @task.done ? 'done' : 'pending' %>">
-              <% if @task.done %>
-                <i class="fas fa-check"></i> Sim
-              <% else %>
-                <i class="fas fa-clock"></i> Não
-              <% end %>
-            </span>
-          <% end %>
-        </p>
+  <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
+
+  <% if @task.column&.name == "Concluído" %>
+    <span class="status-done"><i class="fas fa-check"></i> Sim</span>
+  <% else %>
+    <span class="status-pending"><i class="fas fa-clock"></i> Não</span>
+  <% end %>
+</p>
+
 
         <% if @task.created_at.present? %>
           <p>
@@ -192,7 +188,7 @@
           Excluir
         <% end %>
         
-        <% unless @task.done %>
+        <% unless @task.status == "Concluído" || @task.column.name == "Concluído" %>
           <%= button_to complete_board_column_task_path(@task.column.board, @task.column, @task), 
                         method: :patch,
                         class: "btn btn-success",
@@ -202,6 +198,7 @@
             Concluir
           <% end %>
         <% end %>
+
       </div>
     </div>
   </main>

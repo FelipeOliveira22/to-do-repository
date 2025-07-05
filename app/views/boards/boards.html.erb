@@ -61,7 +61,8 @@
               </div>
               <div class="stat">
                 <i class="fas fa-clock"></i>
-<span><%= board.tasks.where(done: [false, nil]).count %> pendentes</span>
+              <% pending_count = board.tasks.joins(:column).where.not(columns: { name: "Concluído" }).count %>
+              <span><%= pending_count %> pendentes</span>
               </div>
             </div>
             <div class="board-actions" onclick="event.stopPropagation()">

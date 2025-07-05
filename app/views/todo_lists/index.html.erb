@@ -61,7 +61,7 @@
                     <div class="task-details">
                       <div class="task-title"><%= task.title %></div>
                       <div class="task-meta">
-                        <% if task.due_date.present? %>
+                        <% if task.due_date.present? && status != "Done" %>
                           <div class="task-countdown"
                               data-due-date="<%= task.due_date.iso8601 %>"
                               data-task-done="<%= task.done.present? && task.done ? 'true' : 'false' %>">
@@ -73,7 +73,15 @@
                               <span class="seconds">0</span>s
                             </span>
                           </div>
+                        <% elsif status == "Done" %>
+                          <div class="task-completed-label">
+                            <i class="fas fa-check-circle"></i>
+                            Tarefa concluída
+                          </div>
                         <% end %>
+
+
+
 
 
                         <% if task.priority.present? %>
