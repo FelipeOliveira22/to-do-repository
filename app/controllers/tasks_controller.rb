@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :set_board_and_column
+  before_action :set_board_and_column, except: [ :move_column ]
   before_action :set_task, only: [ :show, :edit, :update, :destroy, :complete ]
 
   def new
@@ -83,7 +83,7 @@ class TasksController < ApplicationController
   end
 
   def set_task
-    @task = @column.tasks.find(params[:id])
+@task = Task.find(params[:id])
   end
 
   def task_params
