@@ -9,9 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <%= stylesheet_link_tag "task", "data-turbo-track": "reload" %>
   <%= javascript_include_tag 'task_details', 'data-turbo-track': 'reload' %>
+  
 
 
 </head>
+<script>
+  (function () {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+
+
 <body>
 <header>
   <div class="brand">
@@ -29,10 +38,11 @@
 </header>
 
 
-  <a href="<%= root_path %>" class="back-link">
-    <i class="fas fa-arrow-left"></i>
-    Voltar ao quadro
-  </a>
+<%= link_to kanban_board_path(@board), class: "back-link", data: { turbo: false } do %>
+  <i class="fas fa-arrow-left"></i>
+  Voltar ao quadro
+<% end %>
+
 
   <main>
     <div class="form-container">
@@ -99,10 +109,11 @@
 
         </div>
         <div class="form-actions">
-          <%= link_to "#", class: "btn btn-secondary" do %>
+          <%= link_to kanban_board_path(@board), class: "btn btn-secondary", data: { turbo: false } do %>
             <i class="fas fa-times"></i>
             Cancelar
           <% end %>
+
           
           <%= form.submit "Criar Tarefa", class: "btn-primary" do %>
             <i class="fas fa-plus"></i>
