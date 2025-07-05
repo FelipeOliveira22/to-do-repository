@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <%= stylesheet_link_tag "task", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag 'task_details', 'data-turbo-track': 'reload' %>
+
 
 </head>
 <body>
@@ -87,13 +89,13 @@
             Prioridade
           <% end %>
           <%= form.select :priority, 
-  options_for_select([
-    ['🟢 Baixa', 'baixa'],
-    ['🟡 Média', 'media'],
-    ['🔴 Alta', 'alta']
-  ], @task.priority), 
-  { prompt: "Selecione a prioridade" }, 
-  { class: "form-select" } %>
+          options_for_select([
+            ['🟢 Baixa', 'baixa'],
+            ['🟡 Média', 'media'],
+            ['🔴 Alta', 'alta']
+          ], @task.priority), 
+          { prompt: "Selecione a prioridade" }, 
+          { class: "form-select" } %>
 
         </div>
         <div class="form-actions">

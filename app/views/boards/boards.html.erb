@@ -7,9 +7,12 @@
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/595/595067.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'board', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'theme', 'data-turbo-track': 'reload' %>
+
 <header>
   <div class="brand-logout">
     <div class="brand">
@@ -22,9 +25,10 @@
   </div>
 
   <div class="user">
-    <button title="Alternar tema" onclick="toggleTheme()">
-      <i class="fas fa-moon" id="theme-icon"></i>
-    </button>
+    <button title="Alternar tema" onclick="window.toggleTheme && window.toggleTheme()">
+  <i class="fas" id="theme-icon"></i>
+</button>
+
     <div class="user-icon">
       <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
     </div>
@@ -85,72 +89,5 @@
     </div>
   </main>
 
-  <script>
-    function toggleTheme() {
-      const body = document.body;
-      const themeIcon = document.getElementById('theme-icon');
-      
-      if (body.classList.contains('dark-theme')) {
-        body.classList.remove('dark-theme');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
-        localStorage.setItem('theme', 'light');
-      } else {
-        body.classList.add('dark-theme');
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-        localStorage.setItem('theme', 'dark');
-      }
-    }
-
-    function deleteBoard(id) {
-      if (confirm('Tem certeza que deseja excluir este board? Esta ação não pode ser desfeita.')) {
-        fetch(`/boards/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-          }
-        }).then(() => {
-          location.reload();
-        });
-      }
-    }
-
-function toggleTheme() {
-  const body = document.body;
-  const themeIcon = document.getElementById('theme-icon');
-  
-  if (body.classList.contains('light-theme')) {
-    // Mudando para tema escuro
-    body.classList.remove('light-theme');
-    themeIcon.classList.remove('fa-sun');
-    themeIcon.classList.add('fa-moon');
-    localStorage.setItem('theme', 'dark');
-  } else {
-    // Mudando para tema claro
-    body.classList.add('light-theme');
-    themeIcon.classList.remove('fa-moon');
-    themeIcon.classList.add('fa-sun');
-    localStorage.setItem('theme', 'light');
-  }
-}
-
-// Carrega tema salvo
-document.addEventListener('DOMContentLoaded', function() {
-  const savedTheme = localStorage.getItem('theme');
-  const themeIcon = document.getElementById('theme-icon');
-  
-  if (savedTheme === 'light') {
-    document.body.classList.add('light-theme');
-    themeIcon.classList.remove('fa-moon');
-    themeIcon.classList.add('fa-sun');
-  } else {
-    // Tema escuro (padrão)
-    document.body.classList.remove('light-theme');
-    themeIcon.classList.remove('fa-sun');
-    themeIcon.classList.add('fa-moon');
-  }
-});
-  </script>
 </body>
 </html>
