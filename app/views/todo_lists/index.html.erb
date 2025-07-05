@@ -62,11 +62,19 @@
                       <div class="task-title"><%= task.title %></div>
                       <div class="task-meta">
                         <% if task.due_date.present? %>
-                          <div class="task-time">
+                          <div class="task-countdown"
+                              data-due-date="<%= task.due_date.iso8601 %>"
+                              data-task-done="<%= task.done.present? && task.done ? 'true' : 'false' %>">
                             <i class="fas fa-clock"></i>
-                            <%= task.due_date.strftime("%H:%M") %>
+                            <span class="countdown-timer">
+                              <span class="days">0</span>d 
+                              <span class="hours">0</span>h 
+                              <span class="minutes">0</span>m 
+                              <span class="seconds">0</span>s
+                            </span>
                           </div>
                         <% end %>
+
 
                         <% if task.priority.present? %>
                           <% priority_normalized = task.priority.to_s.downcase.strip %>
@@ -99,7 +107,68 @@
       window.location.href = url;
     }
 
+    // Função para calcular e atualizar o contador regressivo
+    function updateCountdown(element) {
+      const taskDone = element.dataset.taskDone === 'true';
+      
+      // Se a tarefa está concluída, mostrar "Task Concluída"
+      if (taskDone) {
+        element.classList.add('completed');
+        element.querySelector('i').className = 'fas fa-check-circle';
+        element.querySelector('.countdown-timer').innerHTML = '<span class="completed-text">Task Concluída</span>';
+        return;
+      }
+      
+      const dueDate = new Date(element.dataset.dueDate);
+      const now = new Date();
+      const diff = dueDate - now;
+
+      if (diff <= 0) {
+        element.classList.add('expired');
+        element.querySelector('i').className = 'fas fa-exclamation-triangle';
+        element.querySelector('.countdown-timer').innerHTML = '<span class="expired-text">Expirado!</span>';
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      element.querySelector('.days').textContent = days;
+      element.querySelector('.hours').textContent = hours;
+      element.querySelector('.minutes').textContent = minutes;
+      element.querySelector('.seconds').textContent = seconds;
+
+      // Resetar ícone para relógio
+      element.querySelector('i').className = 'fas fa-clock';
+
+      // Adicionar classes para diferentes estados de urgência
+      element.classList.remove('urgent', 'warning', 'normal', 'expired', 'completed');
+      if (diff < 1000 * 60 * 60 * 24) { // Menos de 1 dia
+        element.classList.add('urgent');
+      } else if (diff < 1000 * 60 * 60 * 24 * 3) { // Menos de 3 dias
+        element.classList.add('warning');
+      } else {
+        element.classList.add('normal');
+      }
+    }
+
+    // Inicializar contadores regressivos
+    function initCountdowns() {
+      const countdowns = document.querySelectorAll('.task-countdown');
+      countdowns.forEach(countdown => {
+        updateCountdown(countdown);
+      });
+    }
+
+    // Atualizar contadores a cada segundo
+    setInterval(initCountdowns, 1000);
+
     document.addEventListener('DOMContentLoaded', function() {
+      // Inicializar contadores regressivos
+      initCountdowns();
+      
       const taskLists = document.querySelectorAll('.task-list');
       
       taskLists.forEach(function(taskList) {
@@ -154,45 +223,44 @@
         location.reload();
       });
     }
-    // Adicione este script no seu arquivo HTML do Rails ou em um arquivo JS separado
 
-// Função para alternar tema
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  
-  document.documentElement.setAttribute('data-theme', newTheme);
-  
-  // Atualizar ícone do botão
-  const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
-  if (themeButton) {
-    themeButton.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-  }
-  
-  // Salvar preferência no localStorage
-  localStorage.setItem('theme', newTheme);
-}
+    // Função para alternar tema
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Atualizar ícone do botão
+      const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
+      if (themeButton) {
+        themeButton.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      }
+      
+      // Salvar preferência no localStorage
+      localStorage.setItem('theme', newTheme);
+    }
 
-// Carregar tema salvo
-function loadTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  
-  const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
-  if (themeButton) {
-    themeButton.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-  }
-}
+    // Carregar tema salvo
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
+      if (themeButton) {
+        themeButton.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+      }
+    }
 
-// Adicionar event listener ao botão
-document.addEventListener('DOMContentLoaded', function() {
-  loadTheme();
-  
-  const themeButton = document.querySelector('.user button[title="Alternar tema"]');
-  if (themeButton) {
-    themeButton.addEventListener('click', toggleTheme);
-  }
-});
+    // Adicionar event listener ao botão
+    document.addEventListener('DOMContentLoaded', function() {
+      loadTheme();
+      
+      const themeButton = document.querySelector('.user button[title="Alternar tema"]');
+      if (themeButton) {
+        themeButton.addEventListener('click', toggleTheme);
+      }
+    });
   </script>
 </body>
 </html>

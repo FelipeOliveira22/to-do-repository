@@ -61,7 +61,7 @@
               </div>
               <div class="stat">
                 <i class="fas fa-clock"></i>
-                <span><%= board.tasks.where(status: 'pending').count %> pendentes</span>
+<span><%= board.tasks.where(done: [false, nil]).count %> pendentes</span>
               </div>
             </div>
             <div class="board-actions" onclick="event.stopPropagation()">

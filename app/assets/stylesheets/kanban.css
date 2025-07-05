@@ -24,6 +24,12 @@
   --accent-yellow: #22c55e;
   --drag-overlay: rgba(59, 130, 246, 0.05);
   --drag-overlay-hover: rgba(59, 130, 246, 0.1);
+  /* Cores para o contador regressivo */
+  --countdown-normal: #10b981;
+  --countdown-warning: #f59e0b;
+  --countdown-urgent: #dc2626;
+  --countdown-expired: #7f1d1d;
+  --countdown-completed: #10b981;
 }
 
 /* Tema claro */
@@ -51,6 +57,12 @@
   --accent-yellow: #22c55e;
   --drag-overlay: rgba(59, 130, 246, 0.05);
   --drag-overlay-hover: rgba(59, 130, 246, 0.1);
+  /* Cores para o contador regressivo */
+  --countdown-normal: #059669;
+  --countdown-warning: #d97706;
+  --countdown-urgent: #dc2626;
+  --countdown-expired: #991b1b;
+  --countdown-completed: #059669;
 }
 
 * {
@@ -251,6 +263,11 @@ main h1 {
   position: relative;
   cursor: pointer;
   padding: 16px;
+  /* Garante que o card não quebre e tenha largura fixa */
+  width: 100%;
+  overflow: hidden;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .task:hover {
@@ -264,11 +281,13 @@ main h1 {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  width: 100%;
 }
 
 .task-checkbox {
   margin-top: 4px;
   min-width: 18px;
+  flex-shrink: 0;
 }
 
 .checkbox {
@@ -300,6 +319,8 @@ main h1 {
 
 .task-details {
   flex: 1;
+  min-width: 0; /* Permite que o flex item encolha */
+  overflow: hidden;
 }
 
 .task-title {
@@ -309,6 +330,16 @@ main h1 {
   margin-bottom: 8px;
   line-height: 1.3;
   cursor: grab;
+  /* Quebra de texto otimizada */
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limita a 3 linhas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .task-title:active {
@@ -318,31 +349,142 @@ main h1 {
 .task-meta {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-top: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Evita quebra de linha */
+  min-height: 28px; /* Altura fixa para consistência */
 }
 
-.task-time {
+/* Estilos para o contador regressivo */
+.task-countdown {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
-  color: var(--text-tertiary);
+  font-size: 10px;
+  font-weight: 500;
   background: var(--bg-hover);
   padding: 4px 8px;
   border-radius: 4px;
+  border: 1px solid var(--border-secondary);
+  transition: all 0.3s ease;
+  flex-shrink: 0; /* Não encolhe */
+  max-width: 110px; /* Largura máxima */
+  white-space: nowrap; /* Não quebra */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-countdown i {
+  font-size: 9px;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.countdown-timer {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+/* Estados do contador regressivo */
+.task-countdown.normal {
+  color: var(--countdown-normal);
+  border-color: var(--countdown-normal);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.task-countdown.warning {
+  color: var(--countdown-warning);
+  border-color: var(--countdown-warning);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.task-countdown.warning i {
+  animation: pulse 1s infinite;
+}
+
+.task-countdown.urgent {
+  color: var(--countdown-urgent);
+  border-color: var(--countdown-urgent);
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.task-countdown.urgent i {
+  animation: pulse 0.5s infinite;
+}
+
+.task-countdown.expired {
+  color: var(--countdown-expired);
+  border-color: var(--countdown-expired);
+  background: rgba(127, 29, 29, 0.2);
+}
+
+.task-countdown.expired i {
+  animation: none;
+}
+
+.task-countdown.completed {
+  color: var(--countdown-completed);
+  border-color: var(--countdown-completed);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.task-countdown.completed i {
+  animation: none;
+}
+
+.expired-text {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+}
+
+.completed-text {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--countdown-completed);
+}
+
+/* Animação para números que mudam */
+.countdown-timer span {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.countdown-timer span:hover {
+  transform: scale(1.1);
+}
+
+/* Remover o antigo estilo task-time */
+.task-time {
+  display: none;
 }
 
 .task-priority {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  padding: 2px 4px;
+  gap: 4px;
+  font-size: 9px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-weight: 400;
+  font-weight: 500;
   text-transform: capitalize;
+  flex-shrink: 0; /* Não encolhe */
+  white-space: nowrap; /* Não quebra */
+  max-width: 60px; /* Largura máxima */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .priority-alta {
@@ -458,5 +600,52 @@ main h1 {
   
   header {
     padding: 0 20px;
+  }
+  
+  .task-countdown {
+    max-width: 100px;
+    font-size: 9px;
+  }
+  
+  .countdown-timer {
+    font-size: 8px;
+  }
+  
+  .task-priority {
+    max-width: 50px;
+    font-size: 8px;
+  }
+  
+  .task-meta {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .task-countdown {
+    max-width: 90px;
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+  
+  .countdown-timer {
+    font-size: 7px;
+    letter-spacing: 0.2px;
+  }
+  
+  .task-priority {
+    max-width: 45px;
+    font-size: 7px;
+    padding: 2px 4px;
+  }
+  
+  .task-meta {
+    gap: 4px;
+    min-height: 24px;
+  }
+  
+  .task-title {
+    font-size: 14px;
+    -webkit-line-clamp: 2; /* Limita a 2 linhas no mobile */
   }
 }
