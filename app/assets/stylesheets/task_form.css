@@ -4,18 +4,53 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Modo claro (padrão) */
+  --bg-primary: #fff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #fff;
+  --bg-header: #fff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666;
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  --hover-bg: #f3f4f6;
+  --input-bg: #fff;
+  --success-bg: rgba(34, 197, 94, 0.1);
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --alert-bg: rgba(249, 115, 22, 0.1);
+}
+
+body.dark-theme {
+  /* Modo escuro */
+  --bg-primary: #000;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2a2a2a;
+  --bg-header: #111;
+  --text-primary: #fff;
+  --text-secondary: #ccc;
+  --border-color: #444;
+  --border-light: #333;
+  --hover-bg: #333;
+  --input-bg: #2a2a2a;
+  --success-bg: rgba(34, 197, 94, 0.1);
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --alert-bg: rgba(249, 115, 22, 0.1);
+}
+
 html {
   height: 100%;
-  background: #000;
+  background: var(--bg-primary);
 }
 
 body {
-  background: #000;
-  color: #fff;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Poppins', sans-serif;
   padding: 100px 40px 40px;
   margin: 0;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header {
@@ -24,13 +59,14 @@ header {
   left: 0;
   right: 0;
   height: 64px;
-  background: #111;
-  border-bottom: 1px solid #444;
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
   z-index: 1000;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .brand {
@@ -51,7 +87,7 @@ header {
 .user button {
   background: none;
   border: none;
-  color: #ccc;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 8px;
   border-radius: 6px;
@@ -59,8 +95,8 @@ header {
 }
 
 .user button:hover {
-  background: #333;
-  color: #fff;
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .user-icon {
@@ -82,23 +118,26 @@ header {
 }
 
 .form-container {
-  background: #1e1e1e;
+  background: var(--bg-secondary);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .form-header {
   padding: 24px;
-  border-bottom: 1px solid #333;
-  background: #2a2a2a;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .back-button {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #ccc;
+  color: var(--text-secondary);
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -109,8 +148,8 @@ header {
 }
 
 .back-button:hover {
-  background: #333;
-  color: #fff;
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .form-title {
@@ -119,7 +158,7 @@ header {
   gap: 12px;
   font-size: 24px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -163,6 +202,95 @@ header {
   color: #ef4444;
 }
 
+/* Mensagem de sucesso melhorada */
+.success-message {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid #22c55e;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.success-message::before {
+  content: '✓';
+  background: #22c55e;
+  color: #000;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* Alternativa para notice/alert do Rails */
+.notice {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid #22c55e;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.notice::before {
+  content: '✓';
+  background: #22c55e;
+  color: #000;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.alert {
+  background: rgba(249, 115, 22, 0.1);
+  border: 1px solid #f97316;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #f97316;
+  font-weight: 500;
+}
+
+.alert::before {
+  content: '⚠';
+  background: #f97316;
+  color: #000;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
 .form-group {
   margin-bottom: 24px;
 }
@@ -178,7 +306,7 @@ header {
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 8px;
   font-size: 14px;
 }
@@ -188,10 +316,10 @@ header {
 .form-select {
   width: 100%;
   padding: 12px 16px;
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 16px;
   font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
@@ -215,8 +343,8 @@ header {
 }
 
 .form-select option {
-  background: #2a2a2a;
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-actions {
@@ -224,7 +352,8 @@ header {
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #333;
+  border-top: 1px solid var(--border-light);
+  transition: border-color 0.3s ease;
 }
 
 .btn {
@@ -262,13 +391,40 @@ header {
   transform: translateY(-2px);
 }
 
+/* Modo escuro específico para alguns elementos */
+body.dark-theme .form-container {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+body.dark-theme .success-message::before,
+body.dark-theme .notice::before,
+body.dark-theme .alert::before {
+  color: #fff;
+}
+
+/* Ajustes específicos para o modo claro */
+body:not(.dark-theme) .success-message::before,
+body:not(.dark-theme) .notice::before,
+body:not(.dark-theme) .alert::before {
+  color: #fff;
+}
+
+body:not(.dark-theme) .form-container {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+/* Transições suaves para mudança de tema */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   body {
     padding: 100px 20px 40px;
   }
   
-  .form-content {
+  .form-container {
     padding: 24px 16px;
   }
   
@@ -283,5 +439,21 @@ header {
   
   .btn {
     width: 100%;
+  }
+  
+  .success-message,
+  .notice,
+  .alert {
+    font-size: 12px;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+  }
+  
+  .success-message::before,
+  .notice::before,
+  .alert::before {
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
   }
 }
