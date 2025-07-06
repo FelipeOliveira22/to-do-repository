@@ -20,14 +20,5 @@ test:
   port: 5432
 
 production:
-  primary:
-    <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
-
-  queue:
-    <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
-
-  cable:
-    <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
