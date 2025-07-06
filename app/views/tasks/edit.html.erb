@@ -28,7 +28,6 @@
 
   <main class="main">
     <div class="form-container">
-      <!-- Cabeçalho -->
       <div class="form-header">
         <%= link_to board_column_task_path(@task.column.board, @task.column, @task), class: "back-button" do %>
           <i class="fas fa-arrow-left"></i>
@@ -41,11 +40,9 @@
         </h1>
       </div>
 
-      <!-- Formulário -->
       <div class="form-content">
         <%= form_with model: [@task.column.board, @task.column, @task], local: true, class: "task-form" do |form| %>
           
-          <!-- Exibir erros se houver -->
           <% if @task.errors.any? %>
             <div class="error-messages">
               <div class="error-header">
@@ -105,10 +102,11 @@
             <%= form.submit "Salvar Alterações", class: "btn btn-primary" %>
             <%= link_to "Cancelar", board_column_task_path(@task.column.board, @task.column, @task), class: "btn btn-secondary" %>
           </div>
-          
         <% end %>
       </div>
     </div>
   </main>
+  <script>
+    </script>
 </body>
 </html>

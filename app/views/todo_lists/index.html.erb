@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <%= stylesheet_link_tag "kanban", media: "all", "data-turbo-track": "reload" %>
-  <%= javascript_include_tag 'todo', 'data-turbo-track': 'reload' %>
 
 </head>
 <body >
@@ -113,6 +112,178 @@
       <% end %>
     </div>
   </main>
+  <script>
+
+      (function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+    }
+  })();
+
+function forceReload() {
+  setTimeout(() => {
+    location.reload();
+  }, 10);
+}
+
+function goToTask(event, url) {
+  window.location.href = url;
+}
+
+function updateCountdown(element) {
+  const taskDone = element.dataset.taskDone === 'true';
+
+  if (taskDone) {
+    element.classList.add('completed');
+    element.querySelector('i').className = 'fas fa-check-circle';
+    element.querySelector('.countdown-timer').innerHTML = '<span class="completed-text">Task Concluída</span>';
+    return;
+  }
+
+  const dueDate = new Date(element.dataset.dueDate);
+  const now = new Date();
+  const diff = dueDate - now;
+
+  if (diff <= 0) {
+    element.classList.add('expired');
+    element.querySelector('i').className = 'fas fa-exclamation-triangle';
+    element.querySelector('.countdown-timer').innerHTML = '<span class="expired-text">Expirado!</span>';
+    return;
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  element.querySelector('.days').textContent = days;
+  element.querySelector('.hours').textContent = hours;
+  element.querySelector('.minutes').textContent = minutes;
+  element.querySelector('.seconds').textContent = seconds;
+
+  element.querySelector('i').className = 'fas fa-clock';
+
+  element.classList.remove('urgent', 'warning', 'normal', 'expired', 'completed');
+  if (diff < 1000 * 60 * 60 * 24) {
+    element.classList.add('urgent');
+  } else if (diff < 1000 * 60 * 60 * 24 * 3) {
+    element.classList.add('warning');
+  } else {
+    element.classList.add('normal');
+  }
+}
+
+function initCountdowns() {
+  const countdowns = document.querySelectorAll('.task-countdown');
+  countdowns.forEach(updateCountdown);
+}
+
+setInterval(initCountdowns, 1000);
+
+function updateTaskPosition(taskId, columnId, position) {
+  fetch(`/tasks/${taskId}/move_column`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({
+      column_id: columnId,
+      position: position
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      location.reload();
+    });
+}
+
+function initDragAndDrop() {
+  const taskLists = document.querySelectorAll('.task-list');
+
+  taskLists.forEach(taskList => {
+    if (taskList.classList.contains('sortable-loaded')) return;
+
+    new Sortable(taskList, {
+      group: 'kanban-tasks',
+      animation: 150,
+      ghostClass: 'task-ghost',
+      chosenClass: 'task-chosen',
+      dragClass: 'task-drag',
+      handle: '.task-title',
+
+      onStart: () => {
+        document.body.classList.add('dragging');
+      },
+
+      onEnd: (evt) => {
+        document.body.classList.remove('dragging');
+
+        const taskId = evt.item.getAttribute('data-task-id');
+        const newColumnId = evt.to.getAttribute('data-column-id');
+        const newPosition = evt.newIndex;
+
+        updateTaskPosition(taskId, newColumnId, newPosition);
+      }
+    });
+
+    taskList.classList.add('sortable-loaded');
+  });
+}
+
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+  document.documentElement.setAttribute('data-theme', newTheme);
+
+  const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
+  if (themeButton) {
+    themeButton.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  }
+
+  localStorage.setItem('theme', newTheme);
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+
+  const themeButton = document.querySelector('.user button[title="Alternar tema"] i');
+  if (themeButton) {
+    themeButton.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+  }
+}
+
+function bindThemeButton() {
+  const themeButton = document.querySelector('.user button[title="Alternar tema"]');
+  if (themeButton) themeButton.addEventListener('click', toggleTheme);
+}
+
+function initializeApp() {
+  loadTheme();
+  initCountdowns();
+  initDragAndDrop();
+  bindThemeButton();
+}
+
+document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('turbo:load', initializeApp);
+
+function forceReloadNextVisit() {
+  sessionStorage.setItem('reload_on_return', 'true');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  if (sessionStorage.getItem('reload_on_return') === 'true') {
+    sessionStorage.removeItem('reload_on_return');
+    location.reload();
+  }
+});
+
+  </script>
 
 </body>
 </html>
