@@ -20,21 +20,10 @@
       ToDoDev
     </div>
     <div class="user">
-      <button title="Alternar tema" onclick="toggleTheme()">
-        <i class="fas fa-sun" id="theme-icon"></i>
       </button>
-      <div class="user-icon">
-  <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
-</div>
     </div>
   </header>
 
-  <% if notice %>
-    <div class="alert alert-success">
-      <i class="fas fa-check-circle"></i>
-      <%= notice %>
-    </div>
-  <% end %>
 
   <% if alert %>
     <div class="alert alert-danger">
