@@ -10,7 +10,6 @@
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'board', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'theme', 'data-turbo-track': 'reload' %>
 
 </head>
 <body>
@@ -79,5 +78,192 @@
     </div>
   </main>
 
+      <script>
+        function dismissNotice() {
+          const flash = document.getElementById("flash-notice");
+          if (flash) {
+            flash.classList.add("opacity-0", "translate-y-2");
+            setTimeout(() => flash.remove(), 300);
+          }
+        }
+
+        function dismissAlert() {
+          const flash = document.getElementById("flash-alert");
+          if (flash) {
+            flash.classList.add("opacity-0", "translate-y-2");
+            setTimeout(() => flash.remove(), 300);
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          const flashNotice = document.getElementById("flash-notice");
+          if (flashNotice) {
+            setTimeout(() => {
+              flashNotice.classList.add("opacity-0", "translate-y-2");
+              setTimeout(() => flashNotice.remove(), 500);
+            }, 4000);
+          }
+
+          // Notificação de erro
+          const flashAlert = document.getElementById("flash-alert");
+          if (flashAlert) {
+            setTimeout(() => {
+              flashAlert.classList.add("opacity-0", "translate-y-2");
+              setTimeout(() => flashAlert.remove(), 500);
+            }, 5000); 
+          }
+        });
+
+        document.addEventListener("turbo:load", function () {
+          const flashNotice = document.getElementById("flash-notice");
+          if (flashNotice) {
+            setTimeout(() => {
+              flashNotice.classList.add("opacity-0", "translate-y-2");
+              setTimeout(() => flashNotice.remove(), 500);
+            }, 4000);
+          }
+
+          const flashAlert = document.getElementById("flash-alert");
+          if (flashAlert) {
+            setTimeout(() => {
+              flashAlert.classList.add("opacity-0", "translate-y-2");
+              setTimeout(() => flashAlert.remove(), 500);
+            }, 5000);
+          }
+        });
+
+          (function() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+      }
+    })();
+
+  (function () {
+    'use strict';
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeIcon = document.getElementById('theme-icon');
+      if (!themeIcon) return;
+
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        document.body.classList.remove('light-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    }
+
+    window.toggleTheme = function () {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      if (!themeIcon) return;
+
+      if (body.classList.contains('light-theme')) {
+        body.classList.remove('light-theme');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        body.classList.add('light-theme');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'light');
+      }
+    };
+
+    window.deleteBoard = function (id) {
+      if (!id) return;
+
+      // Verifica se o modal já existe
+      let modal = document.getElementById('confirm-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'confirm-modal';
+        document.body.appendChild(modal);
+      }
+
+      // Estiliza diretamente via JS
+      modal.style.position = 'fixed';
+      modal.style.top = '0';
+      modal.style.left = '0';
+      modal.style.width = '100%';
+      modal.style.height = '100%';
+      modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+      modal.style.display = 'flex';
+      modal.style.justifyContent = 'center';
+      modal.style.alignItems = 'center';
+      modal.style.zIndex = '9999';
+
+      modal.innerHTML = `
+        <div style="
+          background: white;
+          padding: 30px;
+          border-radius: 12px;
+          text-align: center;
+          max-width: 400px;
+          width: 90%;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+          font-family: 'Poppins', sans-serif;
+        ">
+          <h2 style="margin-bottom: 10px;">Confirmação</h2>
+          <p style="margin-bottom: 25px; font-size: 16px; background: #e0e0e0; padding: 12px 16px; border-radius: 8px; color: #222;">
+            Tem certeza que deseja excluir este board?
+          </p>
+
+
+          <div style="display: flex; justify-content: space-around;">
+            <button id="confirm-yes" style="
+              background: #e74c3c;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 6px;
+              font-weight: bold;
+              cursor: pointer;
+            ">Sim, excluir</button>
+            <button id="confirm-no" style="
+              background: #e0e0e0;
+              color: #333;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 6px;
+              font-weight: bold;
+              cursor: pointer;
+            ">Cancelar</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('confirm-yes').onclick = function () {
+        fetch(`/boards/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          }
+        }).then(() => {
+          location.reload();
+        }).catch(err => {
+          alert("Erro ao excluir board.");
+          console.error(err);
+        });
+      };
+
+      document.getElementById('confirm-no').onclick = function () {
+        modal.remove();
+      };
+    };
+
+    // Inicializar tema com Turbo + Turbolinks + fallback
+    document.addEventListener('DOMContentLoaded', initializeTheme);
+    document.addEventListener('turbolinks:load', initializeTheme);
+    document.addEventListener('turbo:load', initializeTheme);
+  })();
+
+      </script>
 </body>
 </html>
