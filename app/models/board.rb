@@ -11,7 +11,7 @@ class Board < ApplicationRecord
   end
 
   def pending_tasks
-    tasks.where(done: [false, nil]).count
+    tasks.where(done: [ false, nil ]).count
   end
 
   def completed_tasks
@@ -23,10 +23,10 @@ end
 class Column < ApplicationRecord
   belongs_to :board
   has_many :tasks, dependent: :destroy
-  
+
   validates :name, presence: true
   validates :name, uniqueness: { scope: :board_id }
-  
+
   def tasks_count
     tasks.count
   end
@@ -38,13 +38,13 @@ class Task < ApplicationRecord
   belongs_to :todo_list, optional: true
 
   validates :title, presence: true, length: { minimum: 1, maximum: 255 }
-  validates :priority, inclusion: { in: ["baixa", "media", "alta"] }, allow_nil: true
+  validates :priority, inclusion: { in: [ "baixa", "media", "alta" ] }, allow_nil: true
   validates :position, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   before_validation :set_position, on: :create
   before_validation :set_status_from_column
 
-  scope :pending, -> { where(done: [false, nil]) }
+  scope :pending, -> { where(done: [ false, nil ]) }
   scope :completed, -> { where(done: true) }
   scope :by_priority, ->(priority) { where(priority: priority) }
   scope :ordered, -> { order(:position) }
