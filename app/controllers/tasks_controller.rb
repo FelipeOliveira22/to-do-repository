@@ -31,13 +31,24 @@ class TasksController < ApplicationController
     end
   end
 
-  def complete
-    if @task.update_columns(done: true, updated_at: Time.current)
-      redirect_to board_column_task_path(@board, @column, @task), notice: "Tarefa marcada como concluída!"
-    else
-      redirect_to board_column_task_path(@board, @column, @task), alert: "Erro ao concluir tarefa!"
-    end
+def complete
+  done_column = @board.columns.find_by(name: "Concluído")
+
+  if done_column
+    @task.update(
+      done: true,
+      column: done_column,
+      status: "Concluído",
+      updated_at: Time.current
+    )
+    redirect_to kanban_board_path(@board), notice: "Tarefa marcada como concluída!"
+  else
+    redirect_to kanban_board_path(@board), alert: "Coluna 'Concluído' não encontrada."
   end
+end
+
+
+
 
   def destroy
     @task.destroy

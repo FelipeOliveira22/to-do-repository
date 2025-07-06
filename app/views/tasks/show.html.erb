@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <%= stylesheet_link_tag "task_card", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag 'task_details', 'data-turbo-track': 'reload' %>
+
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 </head>
@@ -22,7 +24,9 @@
       <button title="Alternar tema" onclick="toggleTheme()">
         <i class="fas fa-sun" id="theme-icon"></i>
       </button>
-      <div class="user-icon">B</div>
+      <div class="user-icon">
+  <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
+</div>
     </div>
   </header>
 
@@ -40,65 +44,10 @@
     </div>
   <% end %>
 
-<a href="<%= kanban_board_path(@board) %>" class="back-link">
+<%= link_to kanban_board_path(@board), class: "back-link", data: { turbo: false } do %>
   <i class="fas fa-arrow-left"></i>
   Voltar ao quadro
-</a>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const taskLists = document.querySelectorAll('.task-list');
-    
-    taskLists.forEach(function(taskList) {
-      new Sortable(taskList, {
-        group: 'kanban-tasks',
-        animation: 150,
-        ghostClass: 'task-ghost',
-        chosenClass: 'task-chosen',
-        dragClass: 'task-drag',
-        
-        onStart: function(evt) {
-          document.body.classList.add('dragging');
-        },
-        
-        onEnd: function(evt) {
-          document.body.classList.remove('dragging');
-          
-          const taskId = evt.item.getAttribute('data-task-id');
-          const newColumnId = evt.to.getAttribute('data-column-id');
-          const newPosition = evt.newIndex;
-          
-          updateTaskPosition(taskId, newColumnId, newPosition);
-        }
-      });
-    });
-  });
-
-  function updateTaskPosition(taskId, columnId, position) {
-    fetch(`/tasks/${taskId}/move_column`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: JSON.stringify({
-        column_id: columnId,
-        position: position
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (!data.success) {
-        alert('Erro ao mover a tarefa: ' + (data.error || ''));
-      }
-    })
-    .catch(error => {
-      console.error('Erro:', error);
-      alert('Erro ao conectar com o servidor');
-    });
-  }
-</script>
+<% end %>
 
 
   <main class="task-details-page">
@@ -145,19 +94,15 @@
         </p>
 
         <p>
-          <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
-          <% if @task.done.nil? %>
-            <span class="status-unknown">Não especificado</span>
-          <% else %>
-            <span class="status-<%= @task.done ? 'done' : 'pending' %>">
-              <% if @task.done %>
-                <i class="fas fa-check"></i> Sim
-              <% else %>
-                <i class="fas fa-clock"></i> Não
-              <% end %>
-            </span>
-          <% end %>
-        </p>
+        <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
+
+        <% if @task.column&.name == "Concluído" %>
+          <span class="status-done"><i class="fas fa-check"></i> Sim</span>
+        <% else %>
+          <span class="status-pending"><i class="fas fa-clock"></i> Não</span>
+        <% end %>
+      </p>
+
 
         <% if @task.created_at.present? %>
           <p>
@@ -183,80 +128,25 @@
           Editar
         <% end %>
         
-        <%= button_to board_column_task_path(@task.column.board, @task.column, @task), 
-                      method: :delete, 
-                      class: "btn btn-danger",
-                      title: "Excluir esta tarefa",
-                      form: { data: { turbo_confirm: "Tem certeza que deseja excluir a tarefa '#{@task.title}'? Esta ação não pode ser desfeita." } } do %>
-          <i class="fas fa-trash-alt"></i>
-          Excluir
-        <% end %>
+      <button type="button" class="btn btn-danger"
+              onclick="deleteTask(<%= @task.id %>, <%= @task.column.id %>, <%= @task.column.board.id %>)">
+        <i class="fas fa-trash-alt"></i>
+        Excluir
+      </button>
+
         
-        <% unless @task.done %>
-          <%= button_to complete_board_column_task_path(@task.column.board, @task.column, @task), 
-                        method: :patch,
-                        class: "btn btn-success",
-                        title: "Marcar como concluída",
-                        form: { data: { turbo_confirm: "Marcar a tarefa '#{@task.title}' como concluída?" } } do %>
-            <i class="fas fa-check"></i>
-            Concluir
-          <% end %>
+        <% unless @task.status == "Concluído" || @task.column.name == "Concluído" %>
+          <button type="button" class="btn btn-success"
+        onclick="confirmCompleteTask(<%= @task.id %>, <%= @task.column.id %>, <%= @task.column.board.id %>, '<%= j @task.title %>')">
+  <i class="fas fa-check"></i>
+  Concluir
+</button>
+
         <% end %>
+
       </div>
     </div>
   </main>
 
-  <script>
-    function toggleTheme() {
-      // Função para alternar tema (se necessário)
-      console.log('Toggle theme');
-    }
-  </script>
-</body>
-</html>
-  <script>
-    function toggleTheme() {
-      const body = document.body;
-      const themeIcon = document.getElementById('theme-icon');
-      
-      if (body.classList.contains('dark-theme')) {
-        body.classList.remove('dark-theme');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
-        localStorage.setItem('theme', 'light');
-      } else {
-        body.classList.add('dark-theme');
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-        localStorage.setItem('theme', 'dark');
-      }
-    }
-
-    // Load saved theme
-    document.addEventListener('DOMContentLoaded', function() {
-      const savedTheme = localStorage.getItem('theme');
-      const themeIcon = document.getElementById('theme-icon');
-      
-      if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-      }
-    });
-
-    // Auto-hide alerts after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-      const alerts = document.querySelectorAll('.alert');
-      alerts.forEach(alert => {
-        setTimeout(() => {
-          alert.style.transition = 'opacity 0.5s';
-          alert.style.opacity = '0';
-          setTimeout(() => {
-            alert.remove();
-          }, 500);
-        }, 5000);
-      });
-    });
-  </script>
 </body>
 </html>
