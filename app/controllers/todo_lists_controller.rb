@@ -7,5 +7,5 @@ def index
   @todo_tasks = @todo_column.tasks.order(created_at: :asc)
   @in_progress_tasks = @in_progress_column.tasks.order(created_at: :asc)
   @done_tasks = @done_column.tasks.order(created_at: :asc)
-end
+  end
 end

@@ -11,75 +11,74 @@
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'board', 'data-turbolinks-track': 'reload' %>
   <%= javascript_include_tag "boards", "data-turbo-track": "reload", defer: true %>
-</head>
-<body>
-  <header>
-    <div class="brand-logout">
-      <i class="fas fa-tasks"></i>
-      ToDoDev
-    </div>
-    <div class="user">
-      <button title="Alternar tema" onclick="toggleTheme()">
-        <i class="fas fa-sun" id="theme-icon"></i>
-      </button>
-      <div class="user-icon">
-        <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
+  </head>
+    <body>
+      <header>
+        <div class="brand-logout">
+          <i class="fas fa-tasks"></i>
+          ToDoDev
+        </div>
+        <div class="user">
+          <button title="Alternar tema" onclick="toggleTheme()">
+            <i class="fas fa-sun" id="theme-icon"></i>
+          </button>
+          <div class="user-icon">
+            <%= current_user.name&.first&.upcase || current_user.email&.first&.upcase || 'U' %>
+          </div>
+          <%= button_to destroy_user_session_path, method: :delete, class: "logout-btn" do %>
+            <i class="fas fa-sign-out-alt"></i> Sair
+          <% end %>
+        </div>
+      </header>
+    <main class="main">
+      <h1>Meus Boards</h1>
+      <div class="boards-header">
+        <div></div>
+        <%= link_to new_board_path, class: "create-board-btn" do %>
+          <i class="fas fa-plus"></i>
+          Criar Novo Board
+        <% end %>
       </div>
-      <%= button_to destroy_user_session_path, method: :delete, class: "logout-btn" do %>
-        <i class="fas fa-sign-out-alt"></i> Sair
-      <% end %>
-    </div>
-  </header>
-  <main class="main">
-    <h1>Meus Boards</h1>
-    
-    <div class="boards-header">
-      <div></div>
-      <%= link_to new_board_path, class: "create-board-btn" do %>
-        <i class="fas fa-plus"></i>
-        Criar Novo Board
-      <% end %>
-    </div>
-    <div class="boards-grid">
-      <% if @boards.any? %>
-        <% @boards.each do |board| %>
-          <div class="board-card" onclick="window.location.href='<%= board_path(board) %>'">
-            <div class="board-title">
-              <i class="fas fa-laptop-code"></i>
-              <%= board.name %>
-            </div>
-            <div class="board-info">
-              <%= board.description.presence || "Sem descrição" %>
-            </div>
-            <div class="board-stats">
-              <div class="stat">
-                <i class="fas fa-tasks"></i>
-                <span><%= board.tasks.count %> tarefas</span>
+      <div class="boards-grid">
+        <% if @boards.any? %>
+          <% @boards.each do |board| %>
+            <div class="board-card" onclick="window.location.href='<%= board_path(board) %>'">
+              <div class="board-title">
+                <i class="fas fa-laptop-code"></i>
+                <%= board.name %>
               </div>
-              <div class="stat">
-                <i class="fas fa-clock"></i>
-              <% pending_count = board.tasks.joins(:column).where.not(columns: { name: "Concluído" }).count %>
-              <span><%= pending_count %> pendentes</span>
+              <div class="board-info">
+                <%= board.description.presence || "Sem descrição" %>
+              </div>
+              <div class="board-stats">
+                <div class="stat">
+                  <i class="fas fa-tasks"></i>
+                  <span><%= board.tasks.count %> tarefas</span>
+                </div>
+                <div class="stat">
+                  <i class="fas fa-clock"></i>
+                <% pending_count = board.tasks.joins(:column).where.not(columns: { name: "Concluído" }).count %>
+                <span><%= pending_count %> pendentes</span>
+                </div>
+              </div>
+              <div class="board-actions" onclick="event.stopPropagation()">
+                <%= link_to edit_board_path(board), class: "edit-btn", title: "Editar" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <button class="delete-btn" title="Excluir" onclick="deleteBoard(<%= board.id %>)">
+                  <i class="fas fa-trash"></i>
+                </button>
               </div>
             </div>
-            <div class="board-actions" onclick="event.stopPropagation()">
-              <%= link_to edit_board_path(board), class: "edit-btn", title: "Editar" do %>
-                <i class="fas fa-edit"></i>
-              <% end %>
-              <button class="delete-btn" title="Excluir" onclick="deleteBoard(<%= board.id %>)">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
+          <% end %>
+        <% else %>
+          <div class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>Nenhum board criado ainda</h3>
+            <p>Crie seu primeiro board para começar a organizar suas tarefas!</p>
           </div>
         <% end %>
-      <% else %>
-        <div class="empty-state">
-          <i class="fas fa-clipboard-list"></i>
-          <h3>Nenhum board criado ainda</h3>
-          <p>Crie seu primeiro board para começar a organizar suas tarefas!</p>
-        </div>
-      <% end %>
-    </div>
+      </div>
   </main>
 </body>
 </html>

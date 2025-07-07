@@ -10,129 +10,108 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <%= stylesheet_link_tag "task_card", "data-turbo-track": "reload" %>
   <%= javascript_include_tag "task_details", "data-turbo-track": "reload", defer: true %>
-
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
-</head>
-<body>
-  <header>
-    <div class="brand">
-      <i class="fas fa-tasks"></i>
-      ToDoDev
-    </div>
-    <div class="user">
-      </button>
-    </div>
-  </header>
-
-
-  <% if alert %>
-    <div class="alert alert-danger">
-      <i class="fas fa-exclamation-triangle"></i>
-      <%= alert %>
-    </div>
-  <% end %>
-
-<%= link_to kanban_board_path(@board), class: "back-link", data: { turbo: false } do %>
-  <i class="fas fa-arrow-left"></i>
-  Voltar ao quadro
-<% end %>
-
-
-  <main class="task-details-page">
-    <div class="task-card">
-      <h1>
-        <i class="fas fa-sticky-note"></i> 
-        <%= @task.title %>
-      </h1>
-
-      <div class="task-info">
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <i class="fas fa-tasks"></i>
+        ToDoDev
+      </div>
+      <div class="user">
+        </button>
+      </div>
+    </header>
+    <% if alert %>
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle"></i>
+        <%= alert %>
+        </div>
+    <% end %>
+    <%= link_to kanban_board_path(@board), class: "back-link", data: { turbo: false } do %>
+      <i class="fas fa-arrow-left"></i>
+      Voltar ao quadro
+    <% end %>
+    <main class="task-details-page">
+      <div class="task-card">
+        <h1>
+          <i class="fas fa-sticky-note"></i> 
+          <%= @task.title %>
+        </h1>
+        <div class="task-info">
+          <p>
+            <strong><i class="fas fa-align-left"></i> Descrição:</strong> 
+            <%= @task.description.presence || "Sem descrição fornecida." %>
+          </p>
+          <p>
+            <strong><i class="fas fa-info-circle"></i> Status:</strong> 
+            <%= @task.status.presence || "Não definido" %>
+          </p>
+          <p>
+            <strong><i class="fas fa-flag"></i> Prioridade:</strong>
+            <% if @task.priority.present? %>
+              <span class="priority <%= @task.priority.downcase %>">
+                <%= @task.priority.capitalize %>
+              </span>
+            <% else %>
+              <span class="no-priority">Não definida</span>
+            <% end %>
+          </p>
+          <p>
+            <strong><i class="fas fa-calendar-alt"></i> Prazo:</strong>
+            <% if @task.due_date.present? %>
+              <span class="due-date <%= 'overdue' if @task.due_date < Time.current %>">
+                <%= @task.due_date.strftime("%d/%m/%Y %H:%M") %>
+                <% if @task.due_date < Time.current %>
+                  <i class="fas fa-exclamation-triangle"></i>
+                <% end %>
+              </span>
+            <% else %>
+              <span class="no-date">Sem prazo definido</span>
+            <% end %>
+          </p>
         <p>
-          <strong><i class="fas fa-align-left"></i> Descrição:</strong> 
-          <%= @task.description.presence || "Sem descrição fornecida." %>
-        </p>
-
-        <p>
-          <strong><i class="fas fa-info-circle"></i> Status:</strong> 
-          <%= @task.status.presence || "Não definido" %>
-        </p>
-
-        <p>
-          <strong><i class="fas fa-flag"></i> Prioridade:</strong>
-          <% if @task.priority.present? %>
-            <span class="priority <%= @task.priority.downcase %>">
-              <%= @task.priority.capitalize %>
-            </span>
+          <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
+          <% if @task.column&.name == "Concluído" %>
+            <span class="status-done"><i class="fas fa-check"></i> Sim</span>
           <% else %>
-            <span class="no-priority">Não definida</span>
+            <span class="status-pending"><i class="fas fa-clock"></i> Não</span>
           <% end %>
         </p>
-
-        <p>
-          <strong><i class="fas fa-calendar-alt"></i> Prazo:</strong>
-          <% if @task.due_date.present? %>
-            <span class="due-date <%= 'overdue' if @task.due_date < Time.current %>">
-              <%= @task.due_date.strftime("%d/%m/%Y %H:%M") %>
-              <% if @task.due_date < Time.current %>
-                <i class="fas fa-exclamation-triangle"></i>
-              <% end %>
-            </span>
-          <% else %>
-            <span class="no-date">Sem prazo definido</span>
-          <% end %>
-        </p>
-
-        <p>
-        <strong><i class="fas fa-check-circle"></i> Concluída:</strong>
-
-        <% if @task.column&.name == "Concluído" %>
-          <span class="status-done"><i class="fas fa-check"></i> Sim</span>
-        <% else %>
-          <span class="status-pending"><i class="fas fa-clock"></i> Não</span>
-        <% end %>
-      </p>
-
-
         <% if @task.created_at.present? %>
           <p>
             <strong><i class="fas fa-plus-circle"></i> Criada em:</strong>
             <%= @task.created_at.strftime("%d/%m/%Y %H:%M") %>
           </p>
         <% end %>
-
         <% if @task.updated_at.present? && @task.updated_at != @task.created_at %>
-          <p>
-            <strong><i class="fas fa-edit"></i> Última atualização:</strong>
-            <%= @task.updated_at.strftime("%d/%m/%Y %H:%M") %>
-          </p>
-        <% end %>
-      </div>
-
-      <div class="actions">
-        <%= link_to edit_board_column_task_path(@task.column.board, @task.column, @task), 
-                    class: "btn btn-secondary",
-                    title: "Editar esta tarefa",
-                    data: { turbo: true } do %>
-          <i class="fas fa-edit"></i>
-          Editar
-        <% end %>
-        
-      <button type="button" class="btn btn-danger"
-              onclick="deleteTask(<%= @task.id %>, <%= @task.column.id %>, <%= @task.column.board.id %>)">
-        <i class="fas fa-trash-alt"></i>
-        Excluir
-      </button>
-
-        
+            <p>
+              <strong><i class="fas fa-edit"></i> Última atualização:</strong>
+              <%= @task.updated_at.strftime("%d/%m/%Y %H:%M") %>
+            </p>
+          <% end %>
+        </div>
+        <div class="actions">
+          <%= link_to edit_board_column_task_path(@task.column.board, @task.column, @task), 
+                      class: "btn btn-secondary",
+                      title: "Editar esta tarefa",
+                      data: { turbo: true } do %>
+            <i class="fas fa-edit"></i>
+            Editar
+          <% end %>
+        <button type="button" class="btn btn-danger"
+                onclick="deleteTask(<%= @task.id %>, <%= @task.column.id %>, <%= @task.column.board.id %>)">
+          <i class="fas fa-trash-alt"></i>
+          Excluir
+        </button>
         <% unless @task.status == "Concluído" || @task.column.name == "Concluído" %>
-          <button type="button" class="btn btn-success"
-        onclick="confirmCompleteTask(<%= @task.id %>, <%= @task.column.id %>, <%= @task.column.board.id %>, '<%= j @task.title %>')">
-          <i class="fas fa-check"></i>
+            <button type="button" class="btn btn-success"
+            onclick="confirmCompleteTask(<%= @task.id %>, <%= @task.column.id %>, <%= @task.column.board.id %>, '<%= j @task.title %>')">
+            <i class="fas fa-check"></i>
           Concluir
         </button>
-
         <% end %>
-
       </div>
     </div>
   </main>

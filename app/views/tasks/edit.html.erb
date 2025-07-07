@@ -82,7 +82,6 @@
               <%= form.datetime_local_field :due_date, class: "form-input" %>
             </div>
           </div>
-
           <div class="form-actions">
             <%= form.submit "Salvar Alterações", class: "btn btn-primary" %>
             <%= link_to "Cancelar", board_column_task_path(@task.column.board, @task.column, @task), class: "btn btn-secondary" %>
