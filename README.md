@@ -92,10 +92,12 @@ rails s
 - Datas de vencimento e indicadores de prioridade
 - Design responsivo com Tailwind e DaisyUI
 - Modo Claro e Escuro para todas as Telas
+- AUtenticação com Google
+- Conexão com Google Agenda
 
 # Seguem as Principais Telas:
 
-![alt text](image-6.png)
+![alt text](image-9.png)
 ![alt text](image.png)
 ![alt text](image-5.png)
 ![alt text](image-1.png)
