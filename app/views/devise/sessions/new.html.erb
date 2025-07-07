@@ -4,6 +4,9 @@
     <p>Acesse sua conta com seus dados</p>
   </div>
 
+  <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, class: "btn btn-outline btn-info w-full flex items-center justify-center gap-2", data: { turbo: false } do %>
+    <i class="fa-brands fa-google"></i> Entrar com Google
+  <% end %>
   <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
     <div class="field">
       <%= f.label :email %>

@@ -192,6 +192,7 @@ header {
   min-height: calc(100vh - 150px);
 }
 
+
 .task-card {
   background: var(--bg-secondary);
   border-radius: 20px;

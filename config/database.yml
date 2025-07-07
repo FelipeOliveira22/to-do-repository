@@ -6,10 +6,10 @@ default: &default
 development:
   <<: *default
   database: to_do_list_v2_development
-  username: postgres          # usuário padrão do PostgreSQL
-  password: '01213022'        # sua senha definida na instalação
-  host: 127.0.0.1             # localhost forçado em IPv4
-  port: 5432                  # porta padrão do PostgreSQL
+  username: postgres
+  password: '01213022'
+  host: 127.0.0.1
+  port: 5432
 
 test:
   <<: *default
@@ -21,23 +21,4 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV["PGDATABASE"] %>
-  username: <%= ENV["PGUSER"] %>
-  password: <%= ENV["PGPASSWORD"] %>
-  host: <%= ENV["PGHOST"] %>
-  port: <%= ENV["PGPORT"] %>
-
-  cache:
-    <<: *default
-    database: to_do_list_v2_production_cache
-    migrations_paths: db/cache_migrate
-
-  queue:
-    <<: *default
-    database: to_do_list_v2_production_queue
-    migrations_paths: db/queue_migrate
-
-  cable:
-    <<: *default
-    database: to_do_list_v2_production_cable
-    migrations_paths: db/cable_migrate
+  url: <%= ENV['DATABASE_URL'] %>

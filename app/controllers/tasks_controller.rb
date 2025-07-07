@@ -11,6 +11,10 @@ class TasksController < ApplicationController
     @task.status = @column.name
 
     if @task.save
+      if current_user.provider == "google_oauth2"
+        GoogleCalendarService.new(current_user).create_or_update_event_for_task(@task)
+      end
+
       redirect_to kanban_board_path(@board), notice: "Tarefa criada com sucesso!"
     else
       puts @task.errors.full_messages
@@ -24,6 +28,9 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
+      if current_user.provider == "google_oauth2"
+        GoogleCalendarService.new(current_user).create_or_update_event_for_task(@task)
+      end
       redirect_to board_column_task_path(@board, @column, @task), notice: "Tarefa atualizada com sucesso!"
     else
       puts @task.errors.full_messages
@@ -52,6 +59,11 @@ end
 
   def destroy
     @task.destroy
+    
+    if current_user.provider == "google_oauth2" && @task.google_event_id.present?
+      GoogleCalendarService.new(current_user).delete_event_for_task(@task)
+    end
+
     redirect_to kanban_board_path(@board), notice: "Tarefa excluída com sucesso."
   end
 
