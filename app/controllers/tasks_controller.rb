@@ -54,9 +54,6 @@ def complete
   end
 end
 
-
-
-
   def destroy
     @task.destroy
 
