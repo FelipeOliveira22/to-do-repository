@@ -59,7 +59,7 @@ end
 
   def destroy
     @task.destroy
-    
+
     if current_user.provider == "google_oauth2" && @task.google_event_id.present?
       GoogleCalendarService.new(current_user).delete_event_for_task(@task)
     end
