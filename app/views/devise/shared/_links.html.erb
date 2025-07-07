@@ -17,7 +17,19 @@
 
   <%- if devise_mapping.omniauthable? %>
     <%- resource_class.omniauth_providers.each do |provider| %>
-      <%= button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), data: { turbo: false } %><br />
+      <% if provider.to_s == 'google_oauth2' %>
+        <%= button_to omniauth_authorize_path(resource_name, provider), 
+                      method: :post, 
+                      style: "display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 320px; margin: 16px auto; padding: 12px 24px; background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; color: #3c4043; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); min-height: 44px;",
+                      data: { turbo: false },
+                      onmouseover: "this.style.background='#f8f9fa'; this.style.borderColor='#c6c6c6'; this.style.boxShadow='0 2px 8px rgba(0, 0, 0, 0.15)';",
+                      onmouseout: "this.style.background='#ffffff'; this.style.borderColor='#dadce0'; this.style.boxShadow='0 1px 3px rgba(0, 0, 0, 0.12)';" do %>
+          <i class="fa-brands fa-google" style="font-size: 18px; color: #4285f4;"></i>
+          <span style="color: #3c4043;">Entrar com Google</span>
+        <% end %>
+      <% else %>
+        <%= button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), data: { turbo: false } %><br />
+      <% end %>
     <% end %>
   <% end %>
 </div>
