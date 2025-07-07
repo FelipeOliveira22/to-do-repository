@@ -239,6 +239,8 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.18.8-x64-mingw-ucrt)
       racc (~> 1.4)
+    nokogiri (1.18.8-x86_64-linux-gnu)
+      racc (~> 1.4)
     oauth2 (2.0.12)
       faraday (>= 0.17.3, < 4.0)
       jwt (>= 1.0, < 4.0)
@@ -429,8 +431,10 @@ GEM
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
     tailwindcss-ruby (4.1.11-x64-mingw-ucrt)
+    tailwindcss-ruby (4.1.11-x86_64-linux-gnu)
     thor (1.3.2)
     thruster (0.1.14)
+    thruster (0.1.14-x86_64-linux)
     timeout (0.4.3)
     trailblazer-option (0.1.2)
     turbo-rails (2.0.16)
@@ -465,6 +469,7 @@ GEM
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap
